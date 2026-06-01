@@ -1,0 +1,71 @@
+\begin{figure}[H]
+    \centering
+
+    \begin{tikzpicture}[
+        font=\small,
+        service/.style={
+            draw,
+            rounded corners,
+            minimum width=3.2cm,
+            minimum height=1cm,
+            align=center,
+            fill=gray!10
+        },
+        broker/.style={
+            draw,
+            rounded corners,
+            minimum width=3.4cm,
+            minimum height=1cm,
+            align=center,
+            fill=gray!20
+        },
+        group/.style={
+            draw,
+            rounded corners,
+            inner sep=0.45cm
+        },
+        arrow/.style={
+            -Latex,
+            thick
+        }
+    ]
+
+% ===================== SINCRONA =====================
+        \node[service] (syncA) at (-4,1) {Microservicio A};
+        \node[service] (syncB) at (-4,-2) {Microservicio B};
+
+        \draw[arrow]
+        ([xshift=-0.35cm]syncA.south) --
+        node[left, align=center] {Solicitud\\REST/gRPC}
+        ([xshift=-0.35cm]syncB.north);
+
+        \draw[arrow]
+        ([xshift=0.35cm]syncB.north) --
+        node[right] {Respuesta}
+        ([xshift=0.35cm]syncA.south);
+
+        \node[group, fit=(syncA)(syncB), label={[font=\bfseries]above:Comunicación Síncrona}] {};
+
+% ===================== ASINCRONA =====================
+        \node[service] (asyncA) at (4,1) {Microservicio A};
+        \node[broker] (broker) at (4,-0.6) {Broker de Eventos\\Kafka / RabbitMQ};
+        \node[service] (asyncB) at (4,-2.3) {Microservicio B};
+
+        \draw[arrow]
+        (asyncA) --
+        node[right] {Publica evento}
+        (broker);
+
+        \draw[arrow]
+        (broker) --
+        node[right] {Consume evento}
+        (asyncB);
+
+        \node[group, fit=(asyncA)(broker)(asyncB), label={[font=\bfseries]above:Comunicación Asíncrona}] {};
+
+    \end{tikzpicture}
+
+    \caption{Comparación entre comunicación síncrona y comunicación asíncrona en arquitecturas de microservicios.}
+    \label{fig:comunicacion_microservicios}
+
+\end{figure}

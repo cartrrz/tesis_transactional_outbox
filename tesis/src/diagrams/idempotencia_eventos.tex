@@ -1,0 +1,56 @@
+\begin{figure}[H]
+    \centering
+
+    \begin{tikzpicture}[
+        font=\small,
+        box/.style={
+            draw,
+            rounded corners,
+            minimum width=3.4cm,
+            minimum height=1cm,
+            align=center,
+            fill=gray!10
+        },
+        store/.style={
+            draw,
+            cylinder,
+            shape border rotate=90,
+            aspect=0.25,
+            minimum width=3.2cm,
+            minimum height=1.2cm,
+            align=center,
+            fill=gray!20
+        },
+        arrow/.style={
+            -Latex,
+            thick
+        },
+        dashedarrow/.style={
+            -Latex,
+            thick,
+            dashed
+        }
+    ]
+
+\node[box] (broker) at (0,3) {Broker de Eventos\\Kafka / RabbitMQ};
+
+\node[box] (consumer) at (0,1) {Consumidor\\Idempotente};
+
+\node[store] (processed) at (-4,-1) {Eventos\\Procesados};
+
+\node[box] (business) at (4,-1) {Lógica de\\Negocio};
+
+\draw[arrow] (broker) -- node[right]{Evento} (consumer);
+
+\draw[arrow] (consumer) -- node[above]{1. Verificar ID} (processed);
+
+\draw[arrow] (consumer) -- node[above]{2. Procesar si no existe} (business);
+
+\draw[dashedarrow] (processed) -- node[below]{Evento duplicado} (consumer);
+
+    \end{tikzpicture}
+
+    \caption{Control de eventos duplicados mediante consumidor idempotente.}
+    \label{fig:idempotencia_eventos}
+
+\end{figure}

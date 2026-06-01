@@ -1,0 +1,43 @@
+\begin{figure}[H]
+    \centering
+
+    \begin{tikzpicture}
+
+        \node[
+            draw,
+            minimum width=10cm,
+            minimum height=5cm
+        ] (mono) {};
+
+        \node at (0,1.5) {\textbf{Aplicación Monolítica}};
+
+        \node[
+            draw,
+            minimum width=2.5cm,
+            minimum height=1cm
+        ] at (-3,0) {Pedidos};
+
+        \node[
+            draw,
+            minimum width=2.5cm,
+            minimum height=1cm
+        ] at (0,0) {Pagos};
+
+        \node[
+            draw,
+            minimum width=2.5cm,
+            minimum height=1cm
+        ] at (3,0) {Inventario};
+
+        \node[
+            draw,
+            minimum width=5cm,
+            minimum height=1cm
+        ] at (0,-1.8) {Base de Datos Compartida};
+
+    \end{tikzpicture}
+
+    \caption{Arquitectura monolítica tradicional.}
+    \label{fig:monolito}
+
+\end{figure}

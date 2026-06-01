@@ -1,0 +1,123 @@
+\chapter{ANTECEDENTES GENERALES O MARCO REFERENCIAL}
+
+\section{INTRODUCCIÓN}
+
+En la actualidad, los sistemas distribuidos y las arquitecturas orientadas a eventos se han convertido en una alternativa importante para el desarrollo de aplicaciones escalables, desacopladas y resilientes. Este tipo de arquitectura permite que los servicios se comuniquen mediante eventos, reduciendo la dependencia directa entre componentes y facilitando la evolución independiente de cada módulo del sistema.
+
+Sin embargo, en los microservicios orientados a eventos surge un problema crítico relacionado con la consistencia entre la base de datos y el sistema de mensajería. Cuando una aplicación necesita guardar información en una base de datos y, al mismo tiempo, publicar un evento en un broker como Apache Kafka o RabbitMQ, puede ocurrir que una de las dos operaciones falle. Esta situación genera inconsistencias, pérdida de eventos o duplicación de mensajes.
+
+El patrón \textit{Transactional Outbox} surge como una solución a este problema, ya que permite almacenar los eventos dentro de la misma transacción de base de datos donde se registran los datos de negocio. Posteriormente, un proceso asíncrono se encarga de publicar dichos eventos en el broker correspondiente, garantizando una entrega más confiable.
+
+El presente trabajo propone el diseño e implementación de una librería genérica en Java y Spring Boot basada en el patrón \textit{Transactional Outbox}, con el objetivo de facilitar su integración en sistemas de microservicios y mejorar la confiabilidad en la entrega de eventos.
+
+\section{PROBLEMA}
+
+\subsection{ANTECEDENTES}
+
+La evolución de los sistemas distribuidos ha impulsado el uso de arquitecturas de microservicios y comunicación asíncrona mediante eventos. Empresas tecnológicas internacionales han adoptado patrones como \textit{Transactional Outbox}, \textit{Change Data Capture} e \textit{Idempotent Consumer} para mejorar la confiabilidad y consistencia de sus plataformas.
+
+En este contexto, los microservicios permiten dividir una aplicación en servicios pequeños e independientes, cada uno con su propia lógica de negocio y almacenamiento de datos. No obstante, esta independencia también introduce nuevos desafíos, especialmente cuando diferentes servicios deben mantenerse sincronizados mediante eventos.
+
+Uno de los principales problemas en este tipo de arquitectura es la doble escritura o \textit{Dual Write Problem}. Este problema aparece cuando un servicio debe realizar dos operaciones dependientes en sistemas distintos: guardar información en una base de datos y publicar un evento en un broker de mensajería. Si una de estas operaciones falla, el sistema puede quedar en un estado inconsistente.
+
+Por ejemplo, puede ocurrir que una orden se registre correctamente en la base de datos, pero el evento asociado no sea enviado al broker. También puede suceder lo contrario: que el evento sea publicado, pero la transacción de base de datos falle. En ambos casos, los servicios consumidores pueden recibir información incorrecta o incompleta.
+
+\subsection{PLANTEAMIENTO DEL PROBLEMA}
+
+En los sistemas de microservicios orientados a eventos, la falta de atomicidad entre la persistencia de datos y la publicación de mensajes genera riesgos de inconsistencia, pérdida de eventos y duplicación de información.
+
+Aunque existen herramientas y patrones para resolver este problema, no siempre se cuenta con una librería reutilizable y sencilla de integrar en proyectos Java con Spring Boot. Esto provoca que cada equipo de desarrollo implemente su propia solución, aumentando la complejidad, el tiempo de desarrollo y la posibilidad de errores.
+
+Por esta razón, se plantea la necesidad de diseñar e implementar una librería genérica basada en el patrón \textit{Transactional Outbox}, que permita registrar eventos de manera transaccional, publicarlos de forma asíncrona y aplicar mecanismos de reintento e idempotencia.
+
+\subsection{FORMULACIÓN DEL PROBLEMA}
+
+¿Cómo garantizar la entrega confiable de eventos en sistemas de microservicios orientados a eventos, evitando la pérdida o duplicación de mensajes mediante una librería reutilizable en Java y Spring Boot?
+
+\section{OBJETIVOS}
+
+\subsection{OBJETIVO GENERAL}
+
+Diseñar e implementar una librería basada en el patrón \textit{Transactional Outbox} que garantice la entrega confiable de eventos en sistemas de microservicios orientados a eventos.
+
+\subsection{OBJETIVOS ESPECÍFICOS}
+
+\begin{itemize}
+    \item Analizar los problemas de inconsistencia en la publicación de eventos dentro de arquitecturas distribuidas.
+    \item Diseñar la arquitectura de una librería \textit{Transactional Outbox} aplicando principios de modularidad y desacoplamiento.
+    \item Implementar el módulo principal de la librería con soporte para proyectos Java y Spring Boot.
+    \item Incorporar mecanismos de reintento, idempotencia y limpieza automática de eventos procesados.
+    \item Validar la efectividad de la librería mediante pruebas de estrés y escenarios de fallas controladas.
+\end{itemize}
+
+\section{HIPÓTESIS}
+
+La implementación del patrón \textit{Transactional Outbox} mediante una librería reutilizable en Java y Spring Boot permite mejorar la entrega confiable de eventos en arquitecturas de microservicios, reduciendo la pérdida y duplicación de mensajes.
+
+\section{JUSTIFICACIÓN}
+
+\subsection{JUSTIFICACIÓN SOCIAL}
+
+La confiabilidad en los sistemas distribuidos tiene impacto directo en la calidad de los servicios digitales utilizados por la sociedad. Una falla en la entrega de eventos puede afectar sistemas financieros, educativos, comerciales o administrativos. Por ello, una solución que mejore la consistencia entre servicios contribuye a ofrecer aplicaciones más estables y seguras para los usuarios finales.
+
+%\subsection{JUSTIFICACIÓN TÉCNICA}
+%
+%La presente investigación responde a una necesidad técnica en el desarrollo de microservicios: garantizar que los datos y los eventos se mantengan sincronizados. El patrón \textit{Transactional Outbox} permite resolver el problema de la doble escritura mediante el registro de eventos dentro de la misma transacción de base de datos.
+%
+%La implementación de una librería reutilizable facilita la adopción de este patrón en proyectos Java y Spring Boot, reduciendo la complejidad del desarrollo y promoviendo buenas prácticas de arquitectura de software.
+
+\subsection{JUSTIFICACIÓN ECONÓMICA}
+
+La pérdida o duplicación de eventos puede generar costos asociados a reprocesos, errores operativos, mantenimiento correctivo e incidentes en producción. Una librería que permita reutilizar una solución confiable reduce tiempos de desarrollo, disminuye riesgos técnicos y optimiza los recursos de las organizaciones que trabajan con microservicios.
+
+\subsection{JUSTIFICACIÓN CIENTÍFICA}
+
+La presente investigación aporta al área de la ingeniería de software y los sistemas distribuidos mediante el estudio y aplicación del patrón \textit{Transactional Outbox} como mecanismo para garantizar la entrega confiable de eventos en arquitecturas orientadas a eventos.
+
+El trabajo contribuye al análisis de problemas relacionados con consistencia eventual, comunicación asíncrona, idempotencia y tolerancia a fallos en microservicios, temas que actualmente representan un área importante de investigación en sistemas distribuidos modernos.
+
+Asimismo, la implementación de una librería reutilizable en Java y Spring Boot permitirá validar de forma práctica conceptos teóricos relacionados con arquitectura orientada a eventos, patrones de integración empresarial y confiabilidad en sistemas distribuidos, sirviendo además como base para futuras investigaciones y desarrollos tecnológicos en el ámbito académico y profesional.
+
+\section{ALCANCES Y LÍMITES}
+
+\subsection{ALCANCES}
+
+\begin{itemize}
+    \item Se diseñará una librería genérica basada en el patrón \textit{Transactional Outbox}.
+    \item Se implementará la solución utilizando Java y Spring Boot.
+    \item Se incluirán mecanismos de reintento para eventos pendientes.
+    \item Se considerará la integración con brokers de mensajería como Kafka y RabbitMQ.
+    \item Se realizarán pruebas controladas para evaluar la confiabilidad de la solución.
+\end{itemize}
+
+\subsection{LÍMITES}
+
+\begin{itemize}
+    \item No se desarrollará una plataforma completa de microservicios empresariales.
+    \item No se abordarán aspectos avanzados de seguridad, auditoría o cifrado de eventos.
+    \item No se implementará soporte para todos los brokers existentes.
+    \item No se estudiarán frameworks diferentes a Spring Boot, como Quarkus o Micronaut.
+    \item La validación se realizará en escenarios simulados y controlados.
+\end{itemize}
+
+\section{METODOLOGÍA}
+
+Para el desarrollo del presente trabajo se utilizará una metodología de investigación aplicada, descriptiva y experimental.
+
+La investigación descriptiva permitirá analizar el problema de la doble escritura, la arquitectura orientada a eventos y los patrones existentes para la entrega confiable de mensajes.
+
+La investigación aplicada se utilizará porque el objetivo principal es construir una solución funcional que pueda ser integrada en proyectos reales desarrollados con Java y Spring Boot.
+
+Finalmente, la investigación experimental permitirá validar la librería mediante escenarios de prueba, como caída del broker, reintentos de publicación, duplicación de eventos y carga concurrente.
+
+El procedimiento general será el siguiente:
+
+\begin{enumerate}
+    \item Analizar los problemas de consistencia en microservicios orientados a eventos.
+    \item Diseñar la arquitectura de la librería \textit{Transactional Outbox}.
+    \item Implementar los módulos de persistencia, publicación, reintento e idempotencia.
+    \item Integrar la librería con brokers de mensajería.
+    \item Ejecutar pruebas controladas de confiabilidad y rendimiento.
+    \item Evaluar los resultados obtenidos.
+    \item Elaborar conclusiones y recomendaciones.
+\end{enumerate}

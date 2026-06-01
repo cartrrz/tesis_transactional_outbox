@@ -1,0 +1,75 @@
+\begin{figure}[H]
+    \centering
+
+    \begin{tikzpicture}[
+        font=\small,
+        service/.style={
+            draw,
+            rounded corners,
+            minimum width=3.4cm,
+            minimum height=1cm,
+            align=center,
+            fill=gray!10
+        },
+        database/.style={
+            draw,
+            cylinder,
+            shape border rotate=90,
+            aspect=0.25,
+            minimum width=2.8cm,
+            minimum height=1.2cm,
+            align=center,
+            fill=gray!15
+        },
+        brokerbox/.style={
+            draw,
+            rounded corners,
+            minimum width=3.2cm,
+            minimum height=1cm,
+            align=center,
+            fill=gray!20
+        },
+        errorbox/.style={
+            draw,
+            rounded corners,
+            minimum width=3.2cm,
+            minimum height=0.9cm,
+            align=center,
+            fill=gray!5
+        },
+        arrow/.style={
+            -Latex,
+            thick
+        },
+        failarrow/.style={
+            -Latex,
+            thick,
+            dashed
+        }
+    ]
+
+        \node[service] (service) at (0,2) {Microservicio\\de Negocio};
+
+        \node[database] (db) at (-4,0) {Base de\\Datos};
+
+        \node[brokerbox] (broker) at (4,0) {Broker de\\Eventos};
+
+        \node[errorbox] (ok) at (-4,-2) {Operación\\confirmada};
+
+        \node[errorbox] (fail) at (4,-2) {Publicación\\fallida};
+
+        \draw[arrow] (service) -- node[above left]{1. Guardar datos} (db);
+        \draw[failarrow] (service) -- node[above right]{2. Publicar evento} (broker);
+
+        \draw[arrow] (db) -- (ok);
+        \draw[failarrow] (broker) -- (fail);
+
+        \node[draw, rounded corners, align=center, fill=gray!10, minimum width=7.6cm, minimum height=0.9cm]
+        at (0,-3.6) {Resultado: inconsistencia entre la base de datos y el sistema de mensajería};
+
+    \end{tikzpicture}
+
+    \caption{Escenario de inconsistencia producido por el problema de la doble escritura.}
+    \label{fig:doble_escritura}
+
+\end{figure}

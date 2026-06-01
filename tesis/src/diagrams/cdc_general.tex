@@ -1,0 +1,52 @@
+\begin{figure}[H]
+    \centering
+
+    \begin{tikzpicture}[
+        font=\small,
+        service/.style={
+            draw,
+            rounded corners,
+            minimum width=3.5cm,
+            minimum height=1cm,
+            align=center,
+            fill=gray!10
+        },
+        database/.style={
+            draw,
+            cylinder,
+            shape border rotate=90,
+            aspect=0.25,
+            minimum width=3.5cm,
+            minimum height=1.2cm,
+            align=center,
+            fill=gray!20
+        },
+        brokerbox/.style={
+            draw,
+            rounded corners,
+            minimum width=4cm,
+            minimum height=1.2cm,
+            align=center,
+            fill=gray!15
+        },
+        arrow/.style={
+            -Latex,
+            thick
+        }
+    ]
+
+\node[service] (app) at (0,3) {Aplicación\\Spring Boot};
+\node[database] (db) at (0,1) {Base de Datos};
+\node[service] (cdc) at (0,-1) {Motor CDC\\Debezium};
+\node[brokerbox] (broker) at (0,-3) {Broker de Eventos\\Kafka};
+
+\draw[arrow] (app) -- (db);
+\draw[arrow] (db) -- node[right]{Transaction Log} (cdc);
+\draw[arrow] (cdc) -- node[right]{Evento} (broker);
+
+    \end{tikzpicture}
+
+    \caption{Arquitectura general de Change Data Capture.}
+    \label{fig:cdc_general}
+
+\end{figure}

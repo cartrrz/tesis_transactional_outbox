@@ -1,0 +1,40 @@
+\begin{figure}[H]
+    \centering
+
+    \begin{tikzpicture}[
+        font=\small,
+        flowbox/.style={
+            draw,
+            rounded corners,
+            minimum width=5.2cm,
+            minimum height=0.9cm,
+            align=center,
+            fill=gray!10
+        },
+        arrow/.style={
+            -Latex,
+            thick
+        }
+    ]
+
+\node[flowbox] (a) {Solicitud de negocio};
+\node[flowbox] (b) [below=0.8cm of a] {Persistencia de datos};
+\node[flowbox] (c) [below=0.8cm of b] {Registro del evento en Outbox};
+\node[flowbox] (d) [below=0.8cm of c] {Confirmación de la transacción};
+\node[flowbox] (e) [below=0.8cm of d] {Lectura de eventos pendientes};
+\node[flowbox] (f) [below=0.8cm of e] {Publicación en Kafka / RabbitMQ};
+\node[flowbox] (g) [below=0.8cm of f] {Marcado del evento como procesado};
+
+\draw[arrow] (a) -- (b);
+\draw[arrow] (b) -- (c);
+\draw[arrow] (c) -- (d);
+\draw[arrow] (d) -- (e);
+\draw[arrow] (e) -- (f);
+\draw[arrow] (f) -- (g);
+
+    \end{tikzpicture}
+
+    \caption{Proceso completo del patrón Transactional Outbox.}
+    \label{fig:outbox_flow}
+
+\end{figure}

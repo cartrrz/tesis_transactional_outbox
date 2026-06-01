@@ -1,0 +1,52 @@
+\begin{figure}[H]
+    \centering
+
+    \begin{tikzpicture}[
+        font=\small,
+        box/.style={
+            draw,
+            rounded corners,
+            minimum width=3.5cm,
+            minimum height=1cm,
+            align=center,
+            fill=gray!10
+        },
+        db/.style={
+            draw,
+            cylinder,
+            shape border rotate=90,
+            aspect=0.25,
+            minimum width=3cm,
+            minimum height=1.5cm,
+            align=center,
+            fill=gray!20
+        },
+        arrow/.style={
+            -Latex,
+            thick
+        }
+    ]
+
+        \node[box] (service) at (0,4) {Microservicio};
+
+        \node[db] (business) at (-3,1.5) {Datos de Negocio};
+
+        \node[db] (outbox) at (3,1.5) {Tabla Outbox};
+
+        \node[box] (publisher) at (0,-1) {Publicador de Eventos};
+
+        \node[box] (broker) at (0,-4) {Kafka / RabbitMQ};
+
+        \draw[arrow] (service) -- (business);
+        \draw[arrow] (service) -- (outbox);
+
+        \draw[arrow] (outbox) -- (publisher);
+
+        \draw[arrow] (publisher) -- (broker);
+
+    \end{tikzpicture}
+
+    \caption{Arquitectura general del patrón Transactional Outbox.}
+    \label{fig:outbox_general}
+
+\end{figure}

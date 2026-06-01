@@ -1,0 +1,60 @@
+\begin{figure}[H]
+    \centering
+
+    \begin{tikzpicture}[
+        font=\small,
+        service/.style={
+            draw,
+            rounded corners,
+            minimum width=3cm,
+            minimum height=1cm,
+            align=center,
+            fill=gray!10
+        },
+        broker/.style={
+            draw,
+            rounded corners,
+            minimum width=3.6cm,
+            minimum height=1.1cm,
+            align=center,
+            fill=gray!20
+        },
+        event/.style={
+            draw,
+            rounded corners,
+            minimum width=2.6cm,
+            minimum height=0.8cm,
+            align=center,
+            fill=gray!5
+        },
+        arrow/.style={
+            -Latex,
+            thick
+        }
+    ]
+
+        \node[service] (producer) at (0,2) {Servicio\\Productor};
+
+        \node[event] (event) at (0,0.6) {Evento\\OrderCreated};
+
+        \node[broker] (broker) at (0,-1) {Broker de Eventos\\Kafka / RabbitMQ};
+
+        \node[service] (consumer1) at (-4,-3) {Servicio\\Inventario};
+
+        \node[service] (consumer2) at (0,-3) {Servicio\\Pagos};
+
+        \node[service] (consumer3) at (4,-3) {Servicio\\Notificaciones};
+
+        \draw[arrow] (producer) -- (event);
+        \draw[arrow] (event) -- (broker);
+
+        \draw[arrow] (broker) -- (consumer1);
+        \draw[arrow] (broker) -- (consumer2);
+        \draw[arrow] (broker) -- (consumer3);
+
+    \end{tikzpicture}
+
+    \caption{Arquitectura orientada a eventos con productores, broker y consumidores.}
+    \label{fig:arquitectura_eventos}
+
+\end{figure}

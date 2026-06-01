@@ -1,0 +1,44 @@
+\begin{figure}[H]
+    \centering
+
+    \begin{tikzpicture}[
+        font=\small,
+        box/.style={
+            draw,
+            rounded corners,
+            minimum width=3.3cm,
+            minimum height=1cm,
+            align=center,
+            fill=gray!10
+        },
+        database/.style={
+            draw,
+            cylinder,
+            shape border rotate=90,
+            aspect=0.25,
+            minimum width=3cm,
+            minimum height=1.2cm,
+            align=center,
+            fill=gray!20
+        },
+        arrow/.style={
+            -Latex,
+            thick
+        }
+    ]
+
+\node[box] (service) at (-5,0) {Microservicio};
+\node[database] (database) at (-1.5,0) {PostgreSQL};
+\node[box] (debezium) at (2.2,0) {Debezium\\Connector};
+\node[box] (kafka) at (5.8,0) {Apache Kafka};
+
+\draw[arrow] (service) -- (database);
+\draw[arrow] (database) -- node[above]{WAL / Log} (debezium);
+\draw[arrow] (debezium) -- node[above]{Eventos} (kafka);
+
+    \end{tikzpicture}
+
+    \caption{Funcionamiento de Debezium utilizando el log transaccional de PostgreSQL.}
+    \label{fig:debezium_architecture}
+
+\end{figure}

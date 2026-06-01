@@ -1,0 +1,18 @@
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        node distance=2.8cm,
+        every node/.style={draw, rectangle, rounded corners, align=center}
+    ]
+\node (app) {Aplicación\\Spring Boot};
+\node (lib) [below=of app] {Librería\\Transactional Outbox};
+\node (db) [below left=of lib] {Base de Datos\\Outbox};
+\node (broker) [below right=of lib] {Kafka /\\RabbitMQ};
+
+\draw[-Latex] (app) -- (lib);
+\draw[-Latex] (lib) -- (db);
+\draw[-Latex] (lib) -- (broker);
+    \end{tikzpicture}
+    \caption{Arquitectura general de la librería propuesta.}
+    \label{fig:arquitectura-libreria}
+\end{figure}

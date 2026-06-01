@@ -1,0 +1,46 @@
+\begin{figure}[H]
+    \centering
+
+    \begin{tikzpicture}[
+        node distance=2.8cm,
+        every node/.style={
+            draw,
+            rounded corners,
+            minimum width=2.8cm,
+            minimum height=1cm,
+            align=center
+        }
+    ]
+
+        \node (cliente) {Cliente};
+
+        \node (api) [below=of cliente] {API Gateway};
+
+        \node (micro1) [below left=of api] {Microservicio\\Pedidos};
+
+        \node (micro2) [below=of api] {Microservicio\\Pagos};
+
+        \node (micro3) [below right=of api] {Microservicio\\Inventario};
+
+        \node (db1) [below=of micro1] {Base de Datos};
+
+        \node (db2) [below=of micro2] {Base de Datos};
+
+        \node (db3) [below=of micro3] {Base de Datos};
+
+        \draw[-Latex] (cliente) -- (api);
+
+        \draw[-Latex] (api) -- (micro1);
+        \draw[-Latex] (api) -- (micro2);
+        \draw[-Latex] (api) -- (micro3);
+
+        \draw[-Latex] (micro1) -- (db1);
+        \draw[-Latex] (micro2) -- (db2);
+        \draw[-Latex] (micro3) -- (db3);
+
+    \end{tikzpicture}
+
+    \caption{Ejemplo de sistema distribuido basado en microservicios.}
+    \label{fig:sistema-distribuido}
+
+\end{figure}

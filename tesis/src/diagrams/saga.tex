@@ -1,0 +1,18 @@
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        node distance=2.4cm,
+        every node/.style={draw, rectangle, rounded corners, align=center}
+    ]
+        \node (pedido) {Pedido};
+        \node (inventario) [right=of pedido] {Inventario};
+        \node (pago) [right=of inventario] {Pago};
+        \node (factura) [right=of pago] {Facturación};
+
+        \draw[-Latex] (pedido) -- (inventario);
+        \draw[-Latex] (inventario) -- (pago);
+        \draw[-Latex] (pago) -- (factura);
+    \end{tikzpicture}
+    \caption{Flujo simplificado del patrón Saga.}
+    \label{fig:saga}
+\end{figure}

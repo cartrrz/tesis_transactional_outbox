@@ -1,0 +1,16 @@
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        node distance=3cm,
+        every node/.style={draw, rectangle, rounded corners, align=center}
+    ]
+\node (db) {Base de Datos\\PostgreSQL};
+\node (debezium) [right=of db] {Debezium\\CDC};
+\node (kafka) [right=of debezium] {Apache\\Kafka};
+
+\draw[-Latex] (db) -- (debezium);
+\draw[-Latex] (debezium) -- (kafka);
+    \end{tikzpicture}
+    \caption{Captura de cambios mediante CDC y Debezium.}
+    \label{fig:cdc-debezium}
+\end{figure}

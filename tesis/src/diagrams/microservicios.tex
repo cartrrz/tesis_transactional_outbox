@@ -1,0 +1,42 @@
+\begin{figure}[H]
+    \centering
+
+    \begin{tikzpicture}[
+        node distance=2.5cm,
+        every node/.style={
+            draw,
+            rounded corners,
+            minimum width=2.8cm,
+            minimum height=1cm,
+            align=center
+        }
+    ]
+
+\node (api) {API Gateway};
+
+\node (pedidos) [below left=of api] {Servicio\\Pedidos};
+
+\node (pagos) [below=of api] {Servicio\\Pagos};
+
+\node (inventario) [below right=of api] {Servicio\\Inventario};
+
+\node (db1) [below=of pedidos] {DB Pedidos};
+
+\node (db2) [below=of pagos] {DB Pagos};
+
+\node (db3) [below=of inventario] {DB Inventario};
+
+\draw[-Latex] (api) -- (pedidos);
+\draw[-Latex] (api) -- (pagos);
+\draw[-Latex] (api) -- (inventario);
+
+\draw[-Latex] (pedidos) -- (db1);
+\draw[-Latex] (pagos) -- (db2);
+\draw[-Latex] (inventario) -- (db3);
+
+    \end{tikzpicture}
+
+    \caption{Arquitectura basada en microservicios.}
+    \label{fig:microservicios}
+
+\end{figure}

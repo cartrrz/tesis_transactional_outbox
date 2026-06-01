@@ -1,0 +1,20 @@
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        node distance=2.7cm,
+        every node/.style={draw, rectangle, rounded corners, align=center}
+    ]
+\node (service) {Servicio};
+\node (db) [below left=of service] {Datos\\de Negocio};
+\node (outbox) [below right=of service] {Tabla\\Outbox};
+\node (publisher) [below=of outbox] {Publicador\\Asíncrono};
+\node (broker) [right=of publisher] {Kafka /\\RabbitMQ};
+
+\draw[-Latex] (service) -- (db);
+\draw[-Latex] (service) -- (outbox);
+\draw[-Latex] (outbox) -- (publisher);
+\draw[-Latex] (publisher) -- (broker);
+    \end{tikzpicture}
+    \caption{Funcionamiento del patrón Transactional Outbox.}
+    \label{fig:transactional-outbox}
+\end{figure}
