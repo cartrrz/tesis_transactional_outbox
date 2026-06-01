@@ -1,5 +1,4 @@
 \documentclass[12pt,letterpaper, oneside]{book}
-\usepackage[ruled,vlined]{algorithm2e}
 \usepackage{tabularx}
 \usepackage{longtable}
 \usepackage[utf8]{inputenc}
@@ -26,10 +25,12 @@
 \usepackage[left=4cm,top=4cm,right=2.6cm,,bottom=2.6cm]{geometry}
 \usepackage[justification=centering]{caption}
 \usepackage{svg}
-\usepackage{hyperref}
 \usepackage{adjustbox}
 \usepackage{tikz}
 \usetikzlibrary{positioning,arrows.meta,fit,babel,shapes.geometric}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepgfplotslibrary{groupplots}
 
 \captionsetup{belowskip=0pt}
 % \onehalfspacing
@@ -74,6 +75,10 @@
     tabsize=2
 }
 \lstset{style=mystyle}
+
+% Renombrar "Listing" a "Código" en español
+\renewcommand{\lstlistingname}{Código}
+\renewcommand{\lstlistlistingname}{\fontsize{16}{20}\selectfont ÍNDICE DE CÓDIGOS}
 
 
 % SE ELIMINA LA PALABRA "CAPÍTULO" DEL TÍTULO
@@ -122,11 +127,6 @@
 \setcounter{tocdepth}{4}
 \setcounter{secnumdepth}{4}
 
-\renewcommand*{\listalgorithmcfname}{ÍNDICE DE ALGORITMOS}
-\renewcommand*{\algorithmcfname}{Algoritmo}
-\renewcommand*{\algorithmautorefname}{algoritmo}
-\SetKwInput{KwData}{Requiere}
-
 \makeatletter
 \patchcmd{\chapter}{\if@openright\cleardoublepage\else\clearpage\fi}{}{}{}
 \makeatother
@@ -134,26 +134,23 @@
 % Contar las figuras sin el capítulo
 \usepackage{chngcntr}
 \counterwithout{figure}{chapter}
-
-\addto\captionsspanish{% Replace "spanish" with the language you use
-    \renewcommand{\listalgorithmcfname}%
-    {\fontsize{16}{20}\selectfont ÍNDICE DE ALGORITMOS}
-}
+\counterwithout{table}{chapter}
+\AtBeginDocument{\counterwithout{lstlisting}{chapter}}
 
 % Editando el titulo del indice
-\addto\captionsspanish{% Replace "spanish" with the language you use
+\addto\captionsspanish{%
     \renewcommand{\contentsname}%
     {\fontsize{16}{20}\selectfont ÍNDICE}
 }
-\addto\captionsspanish{% Replace "spanish" with the language you use
+\addto\captionsspanish{%
     \renewcommand{\listfigurename}%
     {\fontsize{16}{20}\selectfont ÍNDICE DE FIGURAS}
 }
-
-\addto\captionsspanish{% Replace "spanish" with the language you use
+\addto\captionsspanish{%
     \renewcommand{\listtablename}%
     {\fontsize{16}{20}\selectfont ÍNDICE DE TABLAS}
 }
+
 % quitando espacio del titulo del indice
 \setlength{\cftbeforetoctitleskip}{-1em}
 \setlength{\cftaftertoctitleskip}{1em}
@@ -177,15 +174,15 @@
     % \singlespacing
 
     %ÍNDICE O TABLA DE CONTENIDO-------------------
-%    \tableofcontents
-%    \clearpage
-%    \listoffigures
-%    \clearpage
-%    \listoftables
-%    \clearpage
-%    \listofalgorithms
-%    \clearpage
-%    \setcounter{page}{1}
+    \tableofcontents
+    \clearpage
+    \listoffigures
+    \clearpage
+    \listoftables
+    \clearpage
+    \lstlistoflistings
+    \clearpage
+    \setcounter{page}{1}
     %\cleardoublepage
 % 	\addcontentsline{toc}{chapter}{Lista de figuras} % para 						que aparezca en el indice de contenidos
 % 	\listoffigures % indice de figuras
@@ -210,11 +207,11 @@
     % \thispagestyle{empty}
     \input{chapters/marco_referencial}
     \input{chapters/marco_teorico}
-%    \input{chapters/marco_aplicativo.tex}
-%    \input{chapters/evaluacion_resultados.tex}
-%    \input{chapters/concluciones.tex}
-%    \input{chapters/bibliografia.tex}
-%    \counterwithin{figure}{chapter}
+    \input{chapters/marco_aplicativo}
+    \input{chapters/evaluacion_resultados.tex}
+    \input{chapters/concluciones.tex}
+    \input{chapters/bibliografia}
+    \counterwithin{figure}{chapter}
     % \endgroup
     % \bibliographystyle{apacite}
     % \bibliography{capitulos/biblio.bib}
@@ -231,6 +228,6 @@
 % 	\bibliographystyle{apalike}
 % 		\bibliography{capitulos/biblio}
 
-%---------------------------------------------------	
+%---------------------------------------------------
 
 \end{document}

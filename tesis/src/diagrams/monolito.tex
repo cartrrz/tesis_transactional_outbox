@@ -1,43 +1,21 @@
 \begin{figure}[H]
     \centering
+    \begin{tikzpicture}[
+        font=\small,
+        module/.style={draw, rounded corners, minimum width=2.5cm, minimum height=1cm, align=center, fill=gray!10},
+        database/.style={draw, cylinder, shape border rotate=90, aspect=0.25, minimum width=5cm, minimum height=1.2cm, align=center, fill=gray!20},
+        app/.style={draw, rounded corners, minimum width=10cm, minimum height=4cm, fill=gray!3}
+    ]
+        \node[app] (mono) {};
+        \node at (0,1.2) {\textbf{Aplicación Monolítica}};
 
-    \begin{tikzpicture}
+        \node[module] at (-3,0) {Módulo\\Pedidos};
+        \node[module] at (0,0) {Módulo\\Pagos};
+        \node[module] at (3,0) {Módulo\\Inventario};
 
-        \node[
-            draw,
-            minimum width=10cm,
-            minimum height=5cm
-        ] (mono) {};
-
-        \node at (0,1.5) {\textbf{Aplicación Monolítica}};
-
-        \node[
-            draw,
-            minimum width=2.5cm,
-            minimum height=1cm
-        ] at (-3,0) {Pedidos};
-
-        \node[
-            draw,
-            minimum width=2.5cm,
-            minimum height=1cm
-        ] at (0,0) {Pagos};
-
-        \node[
-            draw,
-            minimum width=2.5cm,
-            minimum height=1cm
-        ] at (3,0) {Inventario};
-
-        \node[
-            draw,
-            minimum width=5cm,
-            minimum height=1cm
-        ] at (0,-1.8) {Base de Datos Compartida};
-
+        \node[database] at (0,-2.5) {Base de Datos Compartida};
     \end{tikzpicture}
-
     \caption{Arquitectura monolítica tradicional.}
     \label{fig:monolito}
-
 \end{figure}
+

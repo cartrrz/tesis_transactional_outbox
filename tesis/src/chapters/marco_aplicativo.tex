@@ -1,0 +1,607 @@
+\clearpage
+\chapter{MARCO APLICATIVO}
+
+Para el presente capítulo es necesaria la lectura de los capítulos anteriores, ya que se utilizan los conceptos de sistemas distribuidos, patrón \textit{Transactional Outbox}, idempotencia y las tecnologías descritas en el marco teórico. En este capítulo se detalla el diseño, la arquitectura y la implementación de la librería propuesta.
+
+\section{ARQUITECTURA DE LA LIBRERÍA}
+
+La librería se diseñó siguiendo principios de modularidad, extensibilidad y bajo acoplamiento, permitiendo su integración en cualquier proyecto Spring Boot con mínima configuración.
+
+\subsection{Estructura Modular}
+
+La librería se compone de tres módulos principales:
+
+\begin{itemize}
+    \item \textbf{Módulo de Persistencia}: responsable de almacenar los eventos en la tabla Outbox dentro de la misma transacción de negocio.
+    \item \textbf{Módulo Publicador}: encargado de leer periódicamente los eventos pendientes y publicarlos en Apache Kafka.
+    \item \textbf{Módulo de Idempotencia}: permite a los consumidores detectar y descartar eventos duplicados.
+\end{itemize}
+
+La Figura~\ref{fig:arquitectura-libreria} presenta la arquitectura modular de la librería.
+
+\input{diagrams/arquitectura_libreria}
+
+\subsection{Modelo de Datos}
+
+La librería utiliza dos tablas en PostgreSQL: una para almacenar los eventos pendientes de publicación y otra para registrar los eventos ya procesados por los consumidores.
+
+\subsubsection{Tabla outbox\_events}
+
+\begin{lstlisting}[language=SQL, caption={Script de creación de la tabla outbox\_events.}]
+CREATE TABLE outbox_events (
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    aggregate_type  VARCHAR(255) NOT NULL,
+    aggregate_id    VARCHAR(255) NOT NULL,
+    event_type      VARCHAR(255) NOT NULL,
+    topic           VARCHAR(255) NOT NULL,
+    payload         JSONB NOT NULL,
+    status          VARCHAR(20) DEFAULT 'PENDING',
+    retry_count     INTEGER DEFAULT 0,
+    max_retries     INTEGER DEFAULT 5,
+    created_at      TIMESTAMP DEFAULT NOW(),
+    processed_at    TIMESTAMP,
+    next_retry_at   TIMESTAMP DEFAULT NOW()
+);
+
+CREATE INDEX idx_outbox_status ON outbox_events(status, next_retry_at);
+\end{lstlisting}
+
+\subsubsection{Tabla processed\_events}
+
+\begin{lstlisting}[language=SQL, caption={Script de creación de la tabla processed\_events.}]
+CREATE TABLE processed_events (
+    event_id        UUID PRIMARY KEY,
+    processed_at    TIMESTAMP DEFAULT NOW()
+);
+
+CREATE INDEX idx_processed_at ON processed_events(processed_at);
+\end{lstlisting}
+
+\section{IMPLEMENTACIÓN DEL MÓDULO DE PERSISTENCIA}
+
+Este módulo permite registrar eventos en la tabla Outbox dentro de la misma transacción que persiste los datos de negocio.
+
+\subsection{Entidad OutboxEvent}
+
+\begin{lstlisting}[language=Java, caption={Entidad JPA para la tabla Outbox.}]
+@Entity
+@Table(name = "outbox_events")
+public class OutboxEvent {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
+
+    @Column(name = "aggregate_type", nullable = false)
+    private String aggregateType;
+
+    @Column(name = "aggregate_id", nullable = false)
+    private String aggregateId;
+
+    @Column(name = "event_type", nullable = false)
+    private String eventType;
+
+    @Column(nullable = false)
+    private String topic;
+
+    @Column(columnDefinition = "jsonb", nullable = false)
+    private String payload;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private OutboxStatus status = OutboxStatus.PENDING;
+
+    @Column(name = "retry_count")
+    private int retryCount = 0;
+
+    @Column(name = "max_retries")
+    private int maxRetries = 5;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(name = "processed_at")
+    private LocalDateTime processedAt;
+
+    @Column(name = "next_retry_at")
+    private LocalDateTime nextRetryAt = LocalDateTime.now();
+}
+\end{lstlisting}
+
+\subsection{Enumeración de Estados}
+
+\begin{lstlisting}[language=Java, caption={Estados posibles de un evento en la tabla Outbox.}]
+public enum OutboxStatus {
+    PENDING,
+    SENT,
+    FAILED
+}
+\end{lstlisting}
+
+\subsection{Repositorio de Eventos}
+
+\begin{lstlisting}[language=Java, caption={Repositorio JPA para consultar eventos pendientes.}]
+@Repository
+public interface OutboxEventRepository
+        extends JpaRepository<OutboxEvent, UUID> {
+
+    @Query("SELECT e FROM OutboxEvent e " +
+           "WHERE e.status = 'PENDING' " +
+           "AND e.nextRetryAt <= :now " +
+           "ORDER BY e.createdAt ASC")
+    List<OutboxEvent> findPendingEvents(
+        @Param("now") LocalDateTime now,
+        Pageable pageable
+    );
+
+    @Modifying
+    @Query("DELETE FROM OutboxEvent e " +
+           "WHERE e.status = 'SENT' " +
+           "AND e.processedAt < :before")
+    int deleteProcessedBefore(
+        @Param("before") LocalDateTime before
+    );
+}
+\end{lstlisting}
+
+\subsection{Servicio de Registro de Eventos}
+
+\begin{lstlisting}[language=Java, caption={Servicio para registrar eventos en la tabla Outbox.}]
+@Service
+public class OutboxEventService {
+
+    private final OutboxEventRepository repository;
+    private final ObjectMapper objectMapper;
+
+    public OutboxEventService(
+            OutboxEventRepository repository,
+            ObjectMapper objectMapper) {
+        this.repository = repository;
+        this.objectMapper = objectMapper;
+    }
+
+    @Transactional
+    public OutboxEvent registerEvent(
+            String aggregateType,
+            String aggregateId,
+            String eventType,
+            String topic,
+            Object payload) {
+
+        OutboxEvent event = new OutboxEvent();
+        event.setAggregateType(aggregateType);
+        event.setAggregateId(aggregateId);
+        event.setEventType(eventType);
+        event.setTopic(topic);
+        event.setPayload(serialize(payload));
+
+        return repository.save(event);
+    }
+
+    private String serialize(Object payload) {
+        try {
+            return objectMapper.writeValueAsString(payload);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(
+                "Error serializando evento", e);
+        }
+    }
+}
+\end{lstlisting}
+
+\section{IMPLEMENTACIÓN DEL MÓDULO PUBLICADOR}
+
+% TODO: Agregar imagen - Diagrama de flujo del ciclo de vida de un evento: PENDING -> (publicación) -> SENT o PENDING -> (falla) -> reintento -> SENT/FAILED. Puede ser un diagrama de estados mostrando las transiciones.
+
+El módulo publicador implementa la estrategia de \textit{Polling Publisher}: un proceso programado que consulta periódicamente la tabla Outbox, publica los eventos pendientes en Kafka y los marca como procesados.
+
+\subsection{Polling Publisher}
+
+\begin{lstlisting}[language=Java, caption={Componente de publicación periódica de eventos.}]
+@Component
+public class OutboxPollingPublisher {
+
+    private final OutboxEventRepository repository;
+    private final KafkaTemplate<String, String> kafkaTemplate;
+    private final OutboxProperties properties;
+
+    @Scheduled(fixedDelayString =
+        "${outbox.polling.interval:1000}")
+    @Transactional
+    public void publishPendingEvents() {
+        List<OutboxEvent> events =
+            repository.findPendingEvents(
+                LocalDateTime.now(),
+                PageRequest.of(0,
+                    properties.getBatchSize())
+            );
+
+        for (OutboxEvent event : events) {
+            try {
+                sendToKafka(event);
+                markAsSent(event);
+            } catch (Exception e) {
+                handleFailure(event);
+            }
+        }
+    }
+
+    private void sendToKafka(OutboxEvent event) {
+        kafkaTemplate.send(
+            event.getTopic(),
+            event.getAggregateId(),
+            event.getPayload()
+        ).get(5, TimeUnit.SECONDS);
+    }
+
+    private void markAsSent(OutboxEvent event) {
+        event.setStatus(OutboxStatus.SENT);
+        event.setProcessedAt(LocalDateTime.now());
+        repository.save(event);
+    }
+
+    private void handleFailure(OutboxEvent event) {
+        event.setRetryCount(
+            event.getRetryCount() + 1);
+
+        if (event.getRetryCount() >= event.getMaxRetries()) {
+            event.setStatus(OutboxStatus.FAILED);
+        } else {
+            long delay = (long) Math.pow(2,
+                event.getRetryCount());
+            event.setNextRetryAt(
+                LocalDateTime.now()
+                    .plusSeconds(delay));
+        }
+        repository.save(event);
+    }
+}
+\end{lstlisting}
+
+\subsection{Mecanismo de Reintento con Backoff Exponencial}
+
+Cuando la publicación de un evento falla, el sistema incrementa un contador de reintentos y calcula el próximo momento de reintento utilizando \textit{backoff exponencial}. La fórmula aplicada es:
+
+\[
+    t_{next} = t_{current} + 2^{retry\_count} \text{ segundos}
+\]
+
+De esta manera, los reintentos se espacian progresivamente: 2s, 4s, 8s, 16s, 32s. Si se supera el número máximo de reintentos configurado, el evento se marca como \texttt{FAILED} para revisión manual.
+
+La Tabla~\ref{tab:retry_backoff} ilustra la progresión del backoff exponencial.
+
+\begin{table}[H]
+    \centering
+    \caption{Progresión del backoff exponencial en reintentos.}
+    \begin{tabular}{|c|c|c|}
+        \hline
+        \textbf{Reintento} & \textbf{Demora (s)} & \textbf{Tiempo acumulado} \\
+        \hline
+        1 & 2 & 2s \\
+        \hline
+        2 & 4 & 6s \\
+        \hline
+        3 & 8 & 14s \\
+        \hline
+        4 & 16 & 30s \\
+        \hline
+        5 & 32 & 62s \\
+        \hline
+    \end{tabular}
+    \label{tab:retry_backoff}
+\end{table}
+
+\section{IMPLEMENTACIÓN DEL MÓDULO DE IDEMPOTENCIA}
+
+Este módulo permite a los servicios consumidores detectar eventos duplicados y evitar procesarlos más de una vez.
+
+\subsection{Entidad ProcessedEvent}
+
+\begin{lstlisting}[language=Java, caption={Entidad JPA para registrar eventos procesados.}]
+@Entity
+@Table(name = "processed_events")
+public class ProcessedEvent {
+
+    @Id
+    @Column(name = "event_id")
+    private UUID eventId;
+
+    @Column(name = "processed_at")
+    private LocalDateTime processedAt =
+        LocalDateTime.now();
+}
+\end{lstlisting}
+
+\subsection{Servicio de Idempotencia}
+
+\begin{lstlisting}[language=Java, caption={Servicio para verificar y registrar eventos procesados.}]
+@Service
+public class IdempotencyService {
+
+    private final ProcessedEventRepository repository;
+
+    public IdempotencyService(
+            ProcessedEventRepository repository) {
+        this.repository = repository;
+    }
+
+    @Transactional
+    public boolean isAlreadyProcessed(UUID eventId) {
+        return repository.existsById(eventId);
+    }
+
+    @Transactional
+    public void markAsProcessed(UUID eventId) {
+        ProcessedEvent record = new ProcessedEvent();
+        record.setEventId(eventId);
+        repository.save(record);
+    }
+}
+\end{lstlisting}
+
+\subsection{Anotación para Consumidores Idempotentes}
+
+Para facilitar el uso de la idempotencia, la librería proporciona una anotación personalizada que puede aplicarse a los métodos de consumo de eventos.
+
+\begin{lstlisting}[language=Java, caption={Anotación personalizada para consumidores idempotentes.}]
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface IdempotentConsumer {
+    String eventIdHeader() default "event-id";
+}
+\end{lstlisting}
+
+\begin{lstlisting}[language=Java, caption={Aspecto que intercepta los consumidores anotados.}]
+@Aspect
+@Component
+public class IdempotentConsumerAspect {
+
+    private final IdempotencyService idempotencyService;
+
+    @Around("@annotation(idempotentConsumer)")
+    public Object checkIdempotency(
+            ProceedingJoinPoint joinPoint,
+            IdempotentConsumer idempotentConsumer)
+            throws Throwable {
+
+        UUID eventId = extractEventId(joinPoint,
+            idempotentConsumer.eventIdHeader());
+
+        if (idempotencyService
+                .isAlreadyProcessed(eventId)) {
+            return null; // Evento duplicado, descartar
+        }
+
+        Object result = joinPoint.proceed();
+        idempotencyService.markAsProcessed(eventId);
+        return result;
+    }
+}
+\end{lstlisting}
+
+\section{LIMPIEZA AUTOMÁTICA DE EVENTOS}
+
+Para evitar el crecimiento indefinido de la tabla Outbox, la librería incluye un mecanismo de limpieza automática que elimina periódicamente los eventos ya publicados.
+
+\begin{lstlisting}[language=Java, caption={Componente de limpieza automática de eventos procesados.}]
+@Component
+public class OutboxCleanupScheduler {
+
+    private final OutboxEventRepository repository;
+    private final OutboxProperties properties;
+
+    @Scheduled(cron =
+        "${outbox.cleanup.cron:0 0 2 * * ?}")
+    @Transactional
+    public void cleanupProcessedEvents() {
+        LocalDateTime threshold =
+            LocalDateTime.now().minusDays(
+                properties.getRetentionDays());
+
+        int deleted = repository
+            .deleteProcessedBefore(threshold);
+
+        log.info("Limpieza completada: {} eventos " +
+            "eliminados", deleted);
+    }
+}
+\end{lstlisting}
+
+\section{AUTO-CONFIGURACIÓN DE SPRING BOOT}
+
+La librería se distribuye como un \textit{Spring Boot Starter}, lo que permite su activación automática mediante la inclusión de la dependencia en el proyecto.
+
+\subsection{Clase de Configuración}
+
+\begin{lstlisting}[language=Java, caption={Auto-configuración de la librería.}]
+@Configuration
+@EnableScheduling
+@EnableJpaRepositories(
+    basePackages = "com.outbox.library.repository")
+@EntityScan(
+    basePackages = "com.outbox.library.entity")
+@ConditionalOnProperty(
+    name = "outbox.enabled",
+    havingValue = "true",
+    matchIfMissing = true)
+public class OutboxAutoConfiguration {
+
+    @Bean
+    @ConditionalOnMissingBean
+    public OutboxEventService outboxEventService(
+            OutboxEventRepository repository,
+            ObjectMapper objectMapper) {
+        return new OutboxEventService(
+            repository, objectMapper);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public OutboxPollingPublisher pollingPublisher(
+            OutboxEventRepository repository,
+            KafkaTemplate<String, String> kafkaTemplate,
+            OutboxProperties properties) {
+        return new OutboxPollingPublisher(
+            repository, kafkaTemplate, properties);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public IdempotencyService idempotencyService(
+            ProcessedEventRepository repository) {
+        return new IdempotencyService(repository);
+    }
+}
+\end{lstlisting}
+
+\subsection{Propiedades de Configuración}
+
+\begin{lstlisting}[language=Java, caption={Propiedades configurables de la librería.}]
+@ConfigurationProperties(prefix = "outbox")
+public class OutboxProperties {
+    private boolean enabled = true;
+    private int batchSize = 50;
+    private long pollingInterval = 1000;
+    private int maxRetries = 5;
+    private int retentionDays = 7;
+    private String cleanupCron = "0 0 2 * * ?";
+}
+\end{lstlisting}
+
+\subsection{Configuración en application.yml}
+
+El usuario de la librería puede personalizar el comportamiento mediante el archivo de configuración de Spring Boot:
+
+\begin{lstlisting}[caption={Ejemplo de configuración en application.yml.}]
+outbox:
+  enabled: true
+  batch-size: 50
+  polling-interval: 1000
+  max-retries: 5
+  retention-days: 7
+  cleanup-cron: "0 0 2 * * ?"
+
+spring:
+  kafka:
+    bootstrap-servers: localhost:9092
+  datasource:
+    url: jdbc:postgresql://localhost:5432/mydb
+\end{lstlisting}
+
+\section{EJEMPLO DE USO}
+
+% TODO: Agregar imagen - Diagrama de secuencia mostrando la interacción entre el Servicio Productor, la Base de Datos (tabla Outbox), el Polling Publisher, Kafka y el Servicio Consumidor (con idempotencia).
+
+A continuación se muestra un ejemplo completo de cómo un servicio de pedidos utiliza la librería para publicar eventos de forma confiable.
+
+\subsection{Servicio Productor}
+
+\begin{lstlisting}[language=Java, caption={Ejemplo de uso de la librería en un servicio de pedidos.}]
+@Service
+public class OrderService {
+
+    private final OrderRepository orderRepository;
+    private final OutboxEventService outboxService;
+
+    @Transactional
+    public Order createOrder(CreateOrderRequest request) {
+        // 1. Persistir la orden
+        Order order = new Order();
+        order.setCustomerId(request.getCustomerId());
+        order.setTotal(request.getTotal());
+        order.setStatus(OrderStatus.CREATED);
+        order = orderRepository.save(order);
+
+        // 2. Registrar evento en la tabla Outbox
+        //    (misma transaccion)
+        OrderCreatedEvent event =
+            new OrderCreatedEvent(
+                order.getId(),
+                order.getCustomerId(),
+                order.getTotal());
+
+        outboxService.registerEvent(
+            "Order",
+            order.getId().toString(),
+            "OrderCreated",
+            "orders.events",
+            event
+        );
+
+        return order;
+    }
+}
+\end{lstlisting}
+
+\subsection{Servicio Consumidor con Idempotencia}
+
+\begin{lstlisting}[language=Java, caption={Ejemplo de consumidor idempotente.}]
+@Service
+public class InventoryConsumer {
+
+    private final InventoryService inventoryService;
+
+    @KafkaListener(topics = "orders.events")
+    @IdempotentConsumer(eventIdHeader = "event-id")
+    public void handleOrderCreated(
+            ConsumerRecord<String, String> record) {
+
+        OrderCreatedEvent event =
+            deserialize(record.value());
+
+        inventoryService.reserveStock(
+            event.getOrderId(),
+            event.getItems()
+        );
+    }
+}
+\end{lstlisting}
+
+\section{ESTRUCTURA DEL PROYECTO}
+
+La Tabla~\ref{tab:estructura_proyecto} presenta la estructura de paquetes de la librería.
+
+\begin{table}[H]
+    \centering
+    \caption{Estructura de paquetes de la librería.}
+    \begin{tabular}{|l|p{7cm}|}
+        \hline
+        \textbf{Paquete} & \textbf{Responsabilidad} \\
+        \hline
+        \texttt{entity} & Entidades JPA (OutboxEvent, ProcessedEvent). \\
+        \hline
+        \texttt{repository} & Repositorios Spring Data JPA. \\
+        \hline
+        \texttt{service} & Servicios de negocio (registro, idempotencia). \\
+        \hline
+        \texttt{publisher} & Polling Publisher y lógica de reintentos. \\
+        \hline
+        \texttt{cleanup} & Scheduler de limpieza automática. \\
+        \hline
+        \texttt{config} & Auto-configuración y propiedades. \\
+        \hline
+        \texttt{annotation} & Anotaciones personalizadas. \\
+        \hline
+        \texttt{aspect} & Aspectos AOP para idempotencia. \\
+        \hline
+    \end{tabular}
+    \label{tab:estructura_proyecto}
+\end{table}
+
+\section{DEPENDENCIAS DEL PROYECTO}
+
+\begin{lstlisting}[caption={Dependencias principales en build.gradle.}]
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.kafka:spring-kafka'
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
+
+    runtimeOnly 'org.postgresql:postgresql'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.testcontainers:postgresql'
+    testImplementation 'org.testcontainers:kafka'
+}
+\end{lstlisting}
+

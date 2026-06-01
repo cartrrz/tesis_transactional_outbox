@@ -1,0 +1,46 @@
+\clearpage
+\chapter{CONCLUSIONES Y RECOMENDACIONES}
+
+\section{CONCLUSIONES}
+
+A partir del desarrollo de la presente investigación y los resultados obtenidos en la fase de evaluación experimental, se establecen las siguientes conclusiones:
+
+\begin{enumerate}
+    \item Se analizaron los problemas de consistencia en la publicación de eventos dentro de arquitecturas de microservicios orientadas a eventos, identificando al problema de la doble escritura (\textit{Dual Write Problem}) como el principal desafío técnico. Se demostró que la escritura directa al broker sin mecanismo de persistencia intermedia genera pérdida de eventos (hasta un 15.3\% en escenarios de falla) y duplicación no controlada de mensajes.
+
+    \item Se diseñó la arquitectura de la librería aplicando principios de modularidad, extensibilidad y bajo acoplamiento, estructurándola en tres módulos independientes: persistencia transaccional, publicación asíncrona con reintentos e idempotencia en el consumo. Esta separación permite que cada módulo evolucione y se configure de forma independiente.
+
+    \item Se implementó exitosamente la librería en Java con integración nativa en proyectos Spring Boot, proporcionando persistencia transaccional de eventos mediante la tabla Outbox, publicación asíncrona mediante la estrategia de \textit{Polling Publisher} y configuración declarativa a través de propiedades estándar de Spring Boot (\texttt{application.yml}).
+
+    \item Se incorporaron mecanismos de reintento con backoff exponencial (con progresión de 2s, 4s, 8s, 16s, 32s), idempotencia en el consumo de eventos mediante el patrón \textit{Idempotent Consumer} con verificación basada en identificador único, y limpieza automática de registros procesados para evitar el crecimiento indefinido de la tabla Outbox.
+
+    \item Se validó la efectividad de la librería mediante pruebas de integración, pruebas de estrés y escenarios de fallas controladas, obteniendo una tasa de entrega del 100\% en todos los escenarios evaluados (43,100 eventos procesados sin pérdida alguna), superando ampliamente el umbral del 99\% establecido en la hipótesis. Se confirmó que la hipótesis de investigación es aceptada.
+
+    \item El patrón \textit{Transactional Outbox} demostró ser una solución efectiva y práctica para garantizar la atomicidad entre la persistencia de datos y la publicación de eventos, eliminando la necesidad de transacciones distribuidas (2PC) y reduciendo significativamente la complejidad de infraestructura en comparación con herramientas de CDC como Debezium.
+
+    \item La librería demostró capacidad de recuperación total ante fallas temporales del broker de mensajería, con tiempos de recuperación proporcionales a la duración de la falla (máximo 18.3 segundos para 165 eventos pendientes tras una caída de 180 segundos).
+
+    \item El módulo de idempotencia descartó correctamente el 100\% de los eventos duplicados en todos los escenarios de prueba, garantizando el procesamiento exactamente una vez (\textit{effectively-once}) desde la perspectiva del consumidor.
+\end{enumerate}
+
+\section{RECOMENDACIONES}
+
+Una vez concluido el presente trabajo, se sugieren las siguientes líneas de investigación y mejoras para trabajos futuros:
+
+\begin{enumerate}
+    \item \textbf{Soporte para múltiples brokers de mensajería}: extender la librería para soportar otros sistemas de mensajería como RabbitMQ, Amazon SQS o Apache Pulsar, mediante una capa de abstracción que permita intercambiar el broker sin modificar la lógica de negocio.
+
+    \item \textbf{Integración con bases de datos NoSQL}: investigar la adaptación del patrón \textit{Transactional Outbox} para bases de datos no relacionales como MongoDB o Cassandra, considerando sus modelos de consistencia particulares.
+
+    \item \textbf{Implementación de Transaction Log Tailing}: complementar la estrategia de \textit{Polling Publisher} con una implementación basada en CDC mediante lectura del log transaccional (WAL de PostgreSQL), reduciendo la latencia de publicación de eventos.
+
+    \item \textbf{Métricas y observabilidad}: incorporar métricas de monitoreo (Micrometer/Prometheus) que permitan visualizar en tiempo real el estado de la tabla Outbox, la tasa de publicación, los reintentos y los eventos fallidos.
+
+    \item \textbf{Evaluación en entornos de producción}: realizar pruebas de la librería en entornos de producción reales con cargas de trabajo sostenidas durante períodos prolongados, para evaluar su comportamiento bajo condiciones no controladas.
+
+    \item \textbf{Compatibilidad con otros frameworks}: extender el soporte a frameworks alternativos como Quarkus o Micronaut, ampliando el alcance de la librería dentro del ecosistema Java.
+
+    \item \textbf{Ordenamiento garantizado de eventos}: investigar mecanismos para garantizar el orden de publicación de eventos por agregado, especialmente en escenarios donde múltiples instancias del \textit{Polling Publisher} operan concurrentemente.
+
+    \item \textbf{Compresión y optimización del payload}: implementar mecanismos de compresión para eventos con payloads extensos y evaluar el impacto en la latencia y el uso de almacenamiento.
+\end{enumerate}

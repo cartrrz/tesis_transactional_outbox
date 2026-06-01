@@ -1,42 +1,31 @@
 \begin{figure}[H]
     \centering
-
     \begin{tikzpicture}[
-        node distance=2.5cm,
-        every node/.style={
-            draw,
-            rounded corners,
-            minimum width=2.8cm,
-            minimum height=1cm,
-            align=center
-        }
+        font=\small,
+        service/.style={draw, rounded corners, minimum width=2.6cm, minimum height=1cm, align=center, fill=gray!10},
+        database/.style={draw, cylinder, shape border rotate=90, aspect=0.25, minimum width=2.2cm, minimum height=1cm, align=center, fill=gray!20},
+        gateway/.style={draw, rounded corners, minimum width=3cm, minimum height=1cm, align=center, fill=gray!15},
+        arrow/.style={-Latex, thick}
     ]
+        \node[gateway] (api) at (0,2) {API Gateway};
 
-\node (api) {API Gateway};
+        \node[service] (pedidos) at (-3.8,0) {Servicio\\Pedidos};
+        \node[service] (pagos) at (0,0) {Servicio\\Pagos};
+        \node[service] (inventario) at (3.8,0) {Servicio\\Inventario};
 
-\node (pedidos) [below left=of api] {Servicio\\Pedidos};
+        \node[database] (db1) at (-3.8,-2) {DB Pedidos};
+        \node[database] (db2) at (0,-2) {DB Pagos};
+        \node[database] (db3) at (3.8,-2) {DB Inventario};
 
-\node (pagos) [below=of api] {Servicio\\Pagos};
+        \draw[arrow] (api) -- (pedidos);
+        \draw[arrow] (api) -- (pagos);
+        \draw[arrow] (api) -- (inventario);
 
-\node (inventario) [below right=of api] {Servicio\\Inventario};
-
-\node (db1) [below=of pedidos] {DB Pedidos};
-
-\node (db2) [below=of pagos] {DB Pagos};
-
-\node (db3) [below=of inventario] {DB Inventario};
-
-\draw[-Latex] (api) -- (pedidos);
-\draw[-Latex] (api) -- (pagos);
-\draw[-Latex] (api) -- (inventario);
-
-\draw[-Latex] (pedidos) -- (db1);
-\draw[-Latex] (pagos) -- (db2);
-\draw[-Latex] (inventario) -- (db3);
-
+        \draw[arrow] (pedidos) -- (db1);
+        \draw[arrow] (pagos) -- (db2);
+        \draw[arrow] (inventario) -- (db3);
     \end{tikzpicture}
-
-    \caption{Arquitectura basada en microservicios.}
+    \caption{Arquitectura basada en microservicios con bases de datos independientes.}
     \label{fig:microservicios}
-
 \end{figure}
+

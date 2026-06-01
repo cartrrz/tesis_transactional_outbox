@@ -1,18 +1,31 @@
 \begin{figure}[H]
     \centering
     \begin{tikzpicture}[
-        node distance=2.8cm,
-        every node/.style={draw, rectangle, rounded corners, align=center}
+        font=\small,
+        app/.style={draw, rounded corners, minimum width=3.5cm, minimum height=0.9cm, align=center, fill=gray!5},
+        lib/.style={draw, rounded corners, minimum width=4cm, minimum height=0.9cm, align=center, fill=gray!15},
+        module/.style={draw, rounded corners, minimum width=2.8cm, minimum height=0.8cm, align=center, fill=gray!10},
+        infra/.style={draw, rounded corners, minimum width=3cm, minimum height=0.9cm, align=center, fill=gray!20},
+        arrow/.style={-Latex, thick}
     ]
-\node (app) {Aplicación\\Spring Boot};
-\node (lib) [below=of app] {Librería\\Transactional Outbox};
-\node (db) [below left=of lib] {Base de Datos\\Outbox};
-\node (broker) [below right=of lib] {Kafka /\\RabbitMQ};
+        \node[app] (app) at (0,4) {Aplicación Spring Boot};
+        \node[lib] (lib) at (0,2.5) {Librería Transactional Outbox};
 
-\draw[-Latex] (app) -- (lib);
-\draw[-Latex] (lib) -- (db);
-\draw[-Latex] (lib) -- (broker);
+        \node[module] (persist) at (-3.5,0.8) {Módulo\\Persistencia};
+        \node[module] (publisher) at (0,0.8) {Módulo\\Publicador};
+        \node[module] (idempotent) at (3.5,0.8) {Módulo\\Idempotencia};
+
+        \node[infra] (db) at (-3.5,-1) {PostgreSQL};
+        \node[infra] (kafka) at (3.5,-1) {Apache Kafka};
+
+        \draw[arrow] (app) -- (lib);
+        \draw[arrow] (lib) -- (persist);
+        \draw[arrow] (lib) -- (publisher);
+        \draw[arrow] (lib) -- (idempotent);
+        \draw[arrow] (persist) -- (db);
+        \draw[arrow] (publisher) -- (kafka);
+        \draw[arrow, dashed] (idempotent) -- (db);
     \end{tikzpicture}
-    \caption{Arquitectura general de la librería propuesta.}
+    \caption{Arquitectura modular de la librería propuesta.}
     \label{fig:arquitectura-libreria}
 \end{figure}

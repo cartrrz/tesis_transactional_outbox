@@ -6,8 +6,8 @@
         box/.style={
             draw,
             rounded corners,
-            minimum width=3.3cm,
-            minimum height=1cm,
+            minimum width=2.4cm,
+            minimum height=0.9cm,
             align=center,
             fill=gray!10
         },
@@ -16,25 +16,27 @@
             cylinder,
             shape border rotate=90,
             aspect=0.25,
-            minimum width=3cm,
-            minimum height=1.2cm,
+            minimum width=2.4cm,
+            minimum height=1cm,
             align=center,
             fill=gray!20
         },
         arrow/.style={
             -Latex,
             thick
-        }
+        },
+        scale=0.85,
+        every node/.append style={scale=0.85}
     ]
 
-\node[box] (service) at (-5,0) {Microservicio};
-\node[database] (database) at (-1.5,0) {PostgreSQL};
-\node[box] (debezium) at (2.2,0) {Debezium\\Connector};
-\node[box] (kafka) at (5.8,0) {Apache Kafka};
+\node[box] (service) at (0,0) {Microservicio};
+\node[database] (database) at (3.5,0) {PostgreSQL};
+\node[box] (debezium) at (7,0) {Debezium\\Connector};
+\node[box] (kafka) at (10.5,0) {Apache Kafka};
 
 \draw[arrow] (service) -- (database);
-\draw[arrow] (database) -- node[above]{WAL / Log} (debezium);
-\draw[arrow] (debezium) -- node[above]{Eventos} (kafka);
+\draw[arrow] (database) -- node[above]{\scriptsize WAL} (debezium);
+\draw[arrow] (debezium) -- node[above]{\scriptsize Eventos} (kafka);
 
     \end{tikzpicture}
 

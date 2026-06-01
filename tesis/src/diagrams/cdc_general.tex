@@ -7,7 +7,7 @@
             draw,
             rounded corners,
             minimum width=3.5cm,
-            minimum height=1cm,
+            minimum height=0.9cm,
             align=center,
             fill=gray!10
         },
@@ -17,7 +17,7 @@
             shape border rotate=90,
             aspect=0.25,
             minimum width=3.5cm,
-            minimum height=1.2cm,
+            minimum height=1cm,
             align=center,
             fill=gray!20
         },
@@ -25,7 +25,7 @@
             draw,
             rounded corners,
             minimum width=4cm,
-            minimum height=1.2cm,
+            minimum height=1cm,
             align=center,
             fill=gray!15
         },
@@ -35,14 +35,14 @@
         }
     ]
 
-\node[service] (app) at (0,3) {Aplicación\\Spring Boot};
-\node[database] (db) at (0,1) {Base de Datos};
-\node[service] (cdc) at (0,-1) {Motor CDC\\Debezium};
-\node[brokerbox] (broker) at (0,-3) {Broker de Eventos\\Kafka};
+\node[service] (app) at (0,2.4) {Aplicación Spring Boot};
+\node[database] (db) at (0,0.8) {Base de Datos};
+\node[service] (cdc) at (0,-0.8) {Motor CDC (Debezium)};
+\node[brokerbox] (broker) at (0,-2.4) {Broker de Eventos (Kafka)};
 
 \draw[arrow] (app) -- (db);
-\draw[arrow] (db) -- node[right]{Transaction Log} (cdc);
-\draw[arrow] (cdc) -- node[right]{Evento} (broker);
+\draw[arrow] (db) -- node[right]{\scriptsize Transaction Log} (cdc);
+\draw[arrow] (cdc) -- node[right]{\scriptsize Evento} (broker);
 
     \end{tikzpicture}
 

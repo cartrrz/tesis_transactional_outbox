@@ -5,301 +5,212 @@ En el presente capítulo se desarrollan los fundamentos teóricos necesarios par
 
 \section{SISTEMAS DISTRIBUIDOS}
 
-Los sistemas distribuidos constituyen uno de los pilares fundamentales del desarrollo de software moderno. El crecimiento exponencial de usuarios, dispositivos conectados y servicios digitales ha generado la necesidad de construir aplicaciones capaces de operar sobre múltiples servidores y ubicaciones geográficas de manera simultánea. Como resultado, las organizaciones han evolucionado desde aplicaciones monolíticas ejecutadas en una única máquina hacia arquitecturas distribuidas capaces de ofrecer mayor disponibilidad, escalabilidad y tolerancia a fallos.
+Los sistemas distribuidos constituyen uno de los pilares fundamentales del desarrollo de software moderno. El crecimiento exponencial de usuarios, dispositivos conectados y servicios digitales ha generado la necesidad de construir aplicaciones capaces de operar sobre múltiples servidores y ubicaciones geográficas de manera simultánea~\parencite{tanenbaum2017}. Como resultado, las organizaciones han evolucionado desde aplicaciones monolíticas ejecutadas en una única máquina hacia arquitecturas distribuidas capaces de ofrecer mayor disponibilidad, escalabilidad y tolerancia a fallos.
 
-Un sistema distribuido puede definirse como un conjunto de componentes de software que se ejecutan en diferentes nodos computacionales y que se comunican mediante una red para alcanzar un objetivo común. Aunque físicamente los componentes se encuentran separados, desde la perspectiva del usuario final el sistema debe comportarse como una única entidad lógica.
+Un sistema distribuido puede definirse como un conjunto de componentes de software que se ejecutan en diferentes nodos computacionales y que se comunican mediante una red para alcanzar un objetivo común~\parencite{coulouris2012}. Aunque físicamente los componentes se encuentran separados, desde la perspectiva del usuario final el sistema debe comportarse como una única entidad lógica.
 
-La Figura \ref{fig:sistema-distribuido} muestra un ejemplo simplificado de un sistema distribuido basado en microservicios, donde diferentes servicios colaboran para atender solicitudes de los usuarios.
+La Figura~\ref{fig:sistema-distribuido} muestra un ejemplo simplificado de un sistema distribuido basado en microservicios, donde diferentes servicios colaboran para atender solicitudes de los usuarios.
 
 \input{diagrams/sistema_distribuido}
 
 \subsection{Definición de Sistema Distribuido}
 
-Diversos autores han propuesto definiciones para los sistemas distribuidos. Una de las más aceptadas corresponde a Coulouris, quien define un sistema distribuido como una colección de computadoras independientes que para los usuarios se presenta como un sistema único y coherente.
+\textcite{coulouris2012} definen un sistema distribuido como ``una colección de computadoras independientes que para los usuarios se presenta como un sistema único y coherente''. \textcite{tanenbaum2017} complementan esta definición señalando que un sistema distribuido es ``una colección de elementos de computación autónomos que aparecen ante sus usuarios como un solo sistema coherente''.
 
-Esta definición destaca dos características fundamentales. La primera es la independencia física de los componentes, ya que cada nodo posee sus propios recursos de procesamiento, memoria y almacenamiento. La segunda es la transparencia, es decir, la capacidad de ocultar la complejidad interna del sistema para que los usuarios perciban una única aplicación integrada.
+Estas definiciones destacan dos características fundamentales. La primera es la independencia física de los componentes, ya que cada nodo posee sus propios recursos de procesamiento, memoria y almacenamiento. La segunda es la transparencia, es decir, la capacidad de ocultar la complejidad interna del sistema para que los usuarios perciban una única aplicación integrada.
 
-Los sistemas distribuidos se encuentran presentes en numerosos escenarios tecnológicos actuales, incluyendo plataformas de comercio electrónico, sistemas bancarios, redes sociales, servicios de streaming, aplicaciones empresariales y soluciones basadas en la nube.
+Los sistemas distribuidos se encuentran presentes en numerosos escenarios tecnológicos actuales, incluyendo plataformas de comercio electrónico, sistemas bancarios, redes sociales, servicios de streaming y soluciones basadas en la nube.
 
 \subsection{Características de los Sistemas Distribuidos}
 
-Los sistemas distribuidos poseen características particulares que los diferencian de las aplicaciones tradicionales ejecutadas en una sola máquina.
-
-\subsubsection{Concurrencia}
-
-Múltiples componentes pueden ejecutar operaciones simultáneamente sobre recursos compartidos. Esto permite mejorar el rendimiento general del sistema y aprovechar mejor los recursos disponibles.
-
-\subsubsection{Escalabilidad}
-
-La capacidad de incrementar recursos mediante la incorporación de nuevos nodos constituye una de las principales ventajas de los sistemas distribuidos. Esta escalabilidad puede realizarse horizontalmente agregando nuevos servidores o verticalmente aumentando la capacidad de los recursos existentes.
-
-\subsubsection{Transparencia}
-
-La transparencia permite ocultar la complejidad interna del sistema. Los usuarios no necesitan conocer la ubicación física de los servicios ni la forma en que estos interactúan entre sí.
-
-\subsubsection{Compartición de Recursos}
-
-Los recursos computacionales pueden ser utilizados por múltiples aplicaciones y usuarios de manera coordinada, optimizando la utilización de la infraestructura disponible.
-
-\subsubsection{Tolerancia a Fallos}
-
-Los sistemas distribuidos deben ser capaces de continuar funcionando incluso cuando algunos de sus componentes presentan fallos temporales o permanentes.
-
-\subsection{Ventajas de los Sistemas Distribuidos}
-
-La adopción de sistemas distribuidos ofrece múltiples beneficios para las organizaciones modernas.
-
-Entre las principales ventajas se encuentran:
+Los sistemas distribuidos poseen características particulares que los diferencian de las aplicaciones tradicionales ejecutadas en una sola máquina~\parencite{coulouris2012}:
 
 \begin{itemize}
-    \item Mayor disponibilidad de los servicios.
-    \item Escalabilidad horizontal prácticamente ilimitada.
-    \item Mejor aprovechamiento de recursos computacionales.
-    \item Flexibilidad para desplegar servicios de forma independiente.
-    \item Reducción de puntos únicos de falla.
-    \item Capacidad para atender grandes volúmenes de usuarios concurrentes.
-    \item Facilidad para distribuir cargas de trabajo.
+    \item \textbf{Concurrencia}: múltiples componentes ejecutan operaciones simultáneamente sobre recursos compartidos.
+    \item \textbf{Escalabilidad}: capacidad de incrementar recursos mediante la incorporación de nuevos nodos (horizontal) o el aumento de capacidad de los existentes (vertical).
+    \item \textbf{Transparencia}: oculta la complejidad interna del sistema al usuario final.
+    \item \textbf{Tolerancia a fallos}: capacidad de continuar funcionando incluso cuando algunos componentes presentan fallos.
+    \item \textbf{Heterogeneidad}: posibilidad de integrar componentes desarrollados con diferentes tecnologías y plataformas.
 \end{itemize}
-
-Estas ventajas han impulsado la adopción masiva de arquitecturas distribuidas en empresas tecnológicas de gran escala como Amazon, Netflix, Uber, Google y Microsoft.
 
 \subsection{Desafíos de los Sistemas Distribuidos}
 
-A pesar de sus ventajas, los sistemas distribuidos presentan desafíos importantes que incrementan significativamente la complejidad de diseño e implementación.
-
-Uno de los principales problemas es la coordinación entre componentes que se ejecutan en diferentes nodos. Debido a la naturaleza distribuida de estos sistemas, las operaciones pueden verse afectadas por retrasos de red, pérdida de paquetes, caídas de servicios o inconsistencias en los datos.
-
-Asimismo, la comunicación entre servicios introduce dependencia de infraestructura adicional, como balanceadores de carga, sistemas de mensajería, mecanismos de descubrimiento de servicios y herramientas de monitoreo.
-
-Otro desafío relevante es la sincronización de información entre diferentes bases de datos. Cuando varios servicios participan en un mismo proceso de negocio, garantizar la consistencia de los datos se convierte en una tarea compleja.
-
-Estos problemas han dado origen a conceptos como consistencia eventual, transacciones distribuidas, patrones Saga y Transactional Outbox, los cuales serán analizados en secciones posteriores.
-
-\subsection{Fallos en Sistemas Distribuidos}
-
-A diferencia de las aplicaciones monolíticas, en los sistemas distribuidos los fallos son inevitables y deben considerarse como parte normal del funcionamiento del sistema.
-
-Los principales tipos de fallos incluyen:
+A pesar de sus ventajas, los sistemas distribuidos presentan desafíos importantes que incrementan significativamente la complejidad de diseño e implementación~\parencite{kleppmann2017}:
 
 \begin{itemize}
-    \item Fallos de hardware.
-    \item Fallos de red.
-    \item Caída de servicios.
-    \item Errores de configuración.
-    \item Saturación de recursos.
-    \item Pérdida o duplicación de mensajes.
-    \item Problemas de sincronización de datos.
+    \item Coordinación entre componentes que se ejecutan en diferentes nodos.
+    \item Retrasos de red, pérdida de paquetes y particiones.
+    \item Sincronización de información entre diferentes bases de datos.
+    \item Gestión de fallos parciales (un servicio falla mientras otros continúan).
+    \item Pérdida o duplicación de mensajes entre servicios.
 \end{itemize}
 
-Un aspecto importante es que un servicio puede fallar mientras otros continúan funcionando correctamente. Este fenómeno se conoce como fallo parcial y representa una de las principales diferencias entre los sistemas distribuidos y los sistemas centralizados.
+Estos problemas han dado origen a conceptos como consistencia eventual, transacciones distribuidas y patrones como \textit{Transactional Outbox}, los cuales serán analizados en secciones posteriores.
 
-Debido a estos desafíos, el diseño de sistemas distribuidos modernos incorpora mecanismos de redundancia, replicación, monitoreo, recuperación automática y patrones de integración que permiten mantener la confiabilidad del sistema aun en presencia de fallos.
-
-En el contexto de la presente investigación, resulta especialmente relevante el problema de la pérdida o duplicación de eventos durante la comunicación entre servicios distribuidos. Este problema motiva el estudio de mecanismos que garanticen una entrega confiable de eventos, entre ellos el patrón \textit{Transactional Outbox}, objeto principal de esta tesis.
+En el contexto de la presente investigación, resulta especialmente relevante el problema de la pérdida o duplicación de eventos durante la comunicación entre servicios distribuidos, lo cual motiva el desarrollo de la librería propuesta.
 
 \section{ARQUITECTURA DE MICROSERVICIOS}
 
-La arquitectura de microservicios representa uno de los enfoques más adoptados para el desarrollo de aplicaciones distribuidas modernas. Su principal objetivo es dividir sistemas complejos en componentes pequeños, independientes y especializados, permitiendo una mayor flexibilidad en el desarrollo, despliegue y mantenimiento de las aplicaciones.
+La arquitectura de microservicios representa uno de los enfoques más adoptados para el desarrollo de aplicaciones distribuidas modernas. Su principal objetivo es dividir sistemas complejos en componentes pequeños, independientes y especializados, permitiendo una mayor flexibilidad en el desarrollo, despliegue y mantenimiento~\parencite{newman2015}.
 
-A diferencia de los sistemas monolíticos tradicionales, donde toda la lógica de negocio se encuentra agrupada en una única aplicación, los microservicios distribuyen las funcionalidades en múltiples servicios autónomos que colaboran entre sí mediante mecanismos de comunicación bien definidos.
-
-La adopción de este modelo arquitectónico ha sido impulsada por la necesidad de construir sistemas escalables, resilientes y capaces de evolucionar rápidamente en entornos empresariales altamente dinámicos.
+A diferencia de los sistemas monolíticos tradicionales, donde toda la lógica de negocio se encuentra agrupada en una única aplicación, los microservicios distribuyen las funcionalidades en múltiples servicios autónomos que colaboran entre sí mediante mecanismos de comunicación bien definidos~\parencite{richardson2018}.
 
 \subsection{Concepto de Microservicios}
 
-Los microservicios pueden definirse como un estilo arquitectónico que estructura una aplicación como un conjunto de servicios pequeños, independientes y desplegables de forma autónoma.
+\textcite{newman2015} define los microservicios como ``servicios pequeños y autónomos que trabajan juntos''. Cada servicio implementa una capacidad específica del negocio, posee su propia lógica, almacenamiento de datos y ciclo de vida de despliegue.
 
-Cada servicio implementa una capacidad específica del negocio y posee su propia lógica, almacenamiento de datos y ciclo de vida de despliegue.
-
-Un principio fundamental de esta arquitectura es que cada microservicio debe ser responsable de una única funcionalidad del dominio, promoviendo así una alta cohesión y un bajo acoplamiento entre componentes.
-
-Esta independencia permite que los equipos de desarrollo trabajen sobre distintos servicios simultáneamente, reduciendo la complejidad asociada a sistemas de gran tamaño.
+Un principio fundamental de esta arquitectura es que cada microservicio debe ser responsable de una única funcionalidad del dominio, promoviendo así una alta cohesión y un bajo acoplamiento entre componentes~\parencite{fowler2014}.
 
 \subsection{Evolución desde Arquitecturas Monolíticas}
 
-Antes de la popularización de los microservicios, la mayoría de las aplicaciones empresariales se desarrollaban utilizando arquitecturas monolíticas.
-
-En una arquitectura monolítica todos los módulos de negocio se ejecutan dentro de una única aplicación y generalmente comparten una misma base de datos.
-
-La Figura \ref{fig:monolito} muestra una representación simplificada de una arquitectura monolítica.
+En una arquitectura monolítica, todos los módulos de negocio se ejecutan dentro de una única aplicación y generalmente comparten una misma base de datos. La Figura~\ref{fig:monolito} muestra una representación simplificada de este enfoque.
 
 \input{diagrams/monolito}
 
-Aunque este enfoque simplifica inicialmente el desarrollo, con el crecimiento del sistema comienzan a aparecer problemas relacionados con mantenimiento, escalabilidad y despliegue.
+Aunque este enfoque simplifica inicialmente el desarrollo, con el crecimiento del sistema comienzan a aparecer problemas relacionados con mantenimiento, escalabilidad y despliegue~\parencite{newman2015}. La Tabla~\ref{tab:monolito_vs_micro} resume las principales diferencias entre ambas arquitecturas.
 
-Para superar estas limitaciones surgió la arquitectura de microservicios, donde cada funcionalidad se implementa como un servicio independiente.
+\begin{table}[H]
+    \centering
+    \caption{Comparación entre arquitectura monolítica y microservicios.}
+    \begin{tabular}{|l|p{5cm}|p{5cm}|}
+        \hline
+        \textbf{Criterio} & \textbf{Monolito} & \textbf{Microservicios} \\
+        \hline
+        Despliegue & Unidad completa & Servicios independientes \\
+        \hline
+        Escalabilidad & Vertical (toda la app) & Horizontal (por servicio) \\
+        \hline
+        Base de datos & Compartida & Independiente por servicio \\
+        \hline
+        Acoplamiento & Alto & Bajo \\
+        \hline
+        Tolerancia a fallos & Baja & Alta \\
+        \hline
+        Complejidad operativa & Baja & Alta \\
+        \hline
+    \end{tabular}
+    \label{tab:monolito_vs_micro}
+\end{table}
 
-La Figura \ref{fig:microservicios} presenta una arquitectura basada en microservicios.
+Para superar las limitaciones del monolito surgió la arquitectura de microservicios, donde cada funcionalidad se implementa como un servicio independiente. La Figura~\ref{fig:microservicios} presenta este modelo.
 
 \input{diagrams/microservicios}
 
-En este modelo, cada servicio posee su propia base de datos y puede evolucionar independientemente del resto del sistema.
-
-\subsubsection{Escalabilidad Individual}
-
-Cada servicio puede escalarse de manera independiente según la demanda específica de la funcionalidad que implementa.
-
-\subsubsection{Descentralización de Datos}
-
-Cada microservicio administra su propia base de datos, evitando dependencias directas sobre esquemas compartidos.
-
-\subsection{Ventajas de los Microservicios}
-
-La arquitectura de microservicios ofrece numerosas ventajas frente a enfoques tradicionales.
-
-Entre las más importantes se encuentran:
-
-\begin{itemize}
-    \item Escalabilidad horizontal.
-    \item Despliegues más rápidos y frecuentes.
-    \item Mayor resiliencia ante fallos.
-    \item Mejor mantenibilidad del código.
-    \item Independencia tecnológica.
-    \item Organización basada en dominios de negocio.
-    \item Desarrollo paralelo por múltiples equipos.
-\end{itemize}
-
-Estas ventajas han impulsado su adopción en empresas tecnológicas de gran escala como Netflix, Amazon, Uber, Spotify y Mercado Libre.
+En este modelo, cada servicio posee su propia base de datos y puede evolucionar independientemente del resto del sistema. Esta descentralización de datos es fundamental para lograr el bajo acoplamiento, pero también introduce desafíos de consistencia que serán analizados en secciones posteriores.
 
 \section{COMUNICACIÓN ENTRE MICROSERVICIOS}
 
-La comunicación entre microservicios constituye uno de los elementos fundamentales de las arquitecturas distribuidas modernas. Debido a que cada microservicio implementa una funcionalidad específica del negocio y opera de manera independiente, es necesario establecer mecanismos que permitan el intercambio de información y la coordinación de procesos entre los distintos servicios que conforman el sistema.
+La comunicación entre microservicios constituye uno de los elementos fundamentales de las arquitecturas distribuidas modernas. Debido a que cada microservicio opera de manera independiente, es necesario establecer mecanismos que permitan el intercambio de información y la coordinación de procesos entre los distintos servicios~\parencite{richardson2018}.
 
-A diferencia de las arquitecturas monolíticas, donde la interacción entre componentes se realiza mediante llamadas internas dentro de la misma aplicación, los microservicios suelen ejecutarse en procesos, contenedores o incluso servidores diferentes. Como consecuencia, toda interacción debe realizarse a través de mecanismos de comunicación distribuidos.
-
-La selección del modelo de comunicación impacta directamente en aspectos como el rendimiento, la escalabilidad, la disponibilidad, la resiliencia y el grado de acoplamiento entre los servicios. En términos generales, los mecanismos de comunicación utilizados en arquitecturas de microservicios pueden clasificarse en comunicación síncrona y comunicación asíncrona.
+La selección del modelo de comunicación impacta directamente en aspectos como el rendimiento, la escalabilidad, la disponibilidad, la resiliencia y el grado de acoplamiento entre los servicios.
 
 \subsection{Comunicación Síncrona}
 
-La comunicación síncrona se caracteriza porque un servicio realiza una solicitud a otro servicio y permanece esperando una respuesta antes de continuar con la ejecución de su proceso.
+La comunicación síncrona se caracteriza porque un servicio realiza una solicitud a otro servicio y permanece esperando una respuesta antes de continuar con la ejecución de su proceso. Las tecnologías más utilizadas son REST (HTTP/JSON), gRPC y GraphQL~\parencite{richardson2018}.
 
-En este modelo existe una dependencia temporal entre ambos participantes. El servicio consumidor requiere que el servicio proveedor se encuentre disponible y responda correctamente para completar la operación solicitada.
-
-Las tecnologías más utilizadas para implementar comunicación síncrona son REST, gRPC y SOAP. Entre ellas, REST se ha convertido en el estándar predominante debido a su simplicidad, flexibilidad y amplia adopción en aplicaciones empresariales.
-
-La comunicación síncrona resulta apropiada cuando se requiere una respuesta inmediata, como en consultas de información o validaciones que forman parte de una transacción de negocio.
-
-Entre sus principales ventajas se encuentran:
-
-\begin{itemize}
-    \item Simplicidad de implementación.
-    \item Respuesta inmediata.
-    \item Facilidad de monitoreo y depuración.
-    \item Amplio soporte tecnológico.
-\end{itemize}
-
-Sin embargo, también presenta algunas limitaciones:
-
-\begin{itemize}
-    \item Alto acoplamiento entre servicios.
-    \item Dependencia de disponibilidad del servicio receptor.
-    \item Mayor latencia en procesos complejos.
-    \item Posibilidad de fallos en cascada.
-\end{itemize}
+Este modelo resulta apropiado cuando se requiere una respuesta inmediata. Sin embargo, introduce acoplamiento temporal entre servicios y puede generar fallos en cascada cuando un servicio no se encuentra disponible.
 
 \subsection{Comunicación Asíncrona}
 
-La comunicación asíncrona permite que un servicio envíe información sin necesidad de esperar una respuesta inmediata.
+La comunicación asíncrona permite que un servicio envíe información sin necesidad de esperar una respuesta inmediata. El servicio productor genera un mensaje o evento que es enviado a un sistema intermediario conocido como \textit{broker de mensajería}. Posteriormente, uno o varios consumidores procesan dicho mensaje cuando se encuentran disponibles~\parencite{kleppmann2017}.
 
-En este enfoque, el servicio productor genera un mensaje o evento que es enviado a un sistema intermediario conocido como broker de mensajería. Posteriormente, uno o varios consumidores procesan dicho mensaje cuando se encuentran disponibles.
+Este modelo reduce significativamente el acoplamiento entre componentes y permite que los servicios evolucionen y escalen de forma independiente. Las tecnologías más utilizadas incluyen Apache Kafka, RabbitMQ y Amazon SQS.
 
-Este modelo reduce significativamente el acoplamiento entre componentes y permite que los servicios evolucionen y escalen de forma independiente.
+\subsection{Comparación entre Modelos de Comunicación}
 
-Las tecnologías más utilizadas para implementar comunicación asíncrona incluyen Apache Kafka, RabbitMQ, ActiveMQ y diversos servicios de mensajería en la nube.
-
-Entre sus principales ventajas se destacan:
-
-\begin{itemize}
-    \item Mayor desacoplamiento entre servicios.
-    \item Mejor tolerancia a fallos.
-    \item Escalabilidad horizontal.
-    \item Procesamiento paralelo de eventos.
-    \item Mayor resiliencia frente a interrupciones temporales.
-\end{itemize}
-
-No obstante, este modelo introduce nuevos desafíos relacionados con la consistencia de datos, la observabilidad, el orden de procesamiento y la gestión de eventos duplicados.
-
-\subsection{Comparación entre Comunicación Síncrona y Asíncrona}
-
-La Figura \ref{fig:comunicacion_microservicios} presenta una comparación conceptual entre ambos modelos de comunicación.
+La Figura~\ref{fig:comunicacion_microservicios} presenta una comparación conceptual entre ambos modelos de comunicación.
 
 \input{diagrams/comunicacion_microservicios}
 
-La comunicación síncrona resulta adecuada cuando se requiere una respuesta inmediata y existe una fuerte dependencia entre los servicios involucrados. Por el contrario, la comunicación asíncrona es especialmente útil en sistemas distribuidos donde la disponibilidad, la escalabilidad y la resiliencia son aspectos prioritarios.
+La Tabla~\ref{tab:sync_vs_async} resume las principales diferencias entre comunicación síncrona y asíncrona.
+
+\begin{table}[H]
+    \centering
+    \caption{Comparación entre comunicación síncrona y asíncrona.}
+    \begin{tabular}{|l|p{5cm}|p{5cm}|}
+        \hline
+        \textbf{Criterio} & \textbf{Síncrona} & \textbf{Asíncrona} \\
+        \hline
+        Acoplamiento & Alto (temporal) & Bajo \\
+        \hline
+        Respuesta & Inmediata & Diferida \\
+        \hline
+        Tolerancia a fallos & Baja & Alta \\
+        \hline
+        Escalabilidad & Limitada & Alta \\
+        \hline
+        Complejidad & Baja & Media-Alta \\
+        \hline
+        Ejemplo & REST, gRPC & Kafka, RabbitMQ \\
+        \hline
+    \end{tabular}
+    \label{tab:sync_vs_async}
+\end{table}
 
 Actualmente, muchas organizaciones adoptan arquitecturas híbridas que combinan ambos enfoques. Las operaciones que requieren respuesta inmediata suelen implementarse mediante REST o gRPC, mientras que los procesos de integración y propagación de cambios se realizan mediante eventos distribuidos.
 
-Debido a las ventajas que ofrece la comunicación basada en eventos para sistemas de gran escala, las arquitecturas modernas han evolucionado hacia modelos orientados a eventos, conocidos como Event-Driven Architecture (EDA), los cuales serán estudiados en la siguiente sección.
-
 \section{ARQUITECTURA ORIENTADA A EVENTOS}
 
-La arquitectura orientada a eventos, conocida también como \textit{Event-Driven Architecture} o EDA, es un estilo arquitectónico en el que los componentes del sistema se comunican mediante la producción, publicación, consumo y procesamiento de eventos.
+La arquitectura orientada a eventos, conocida también como \textit{Event-Driven Architecture} (EDA), es un estilo arquitectónico en el que los componentes del sistema se comunican mediante la producción, publicación, consumo y procesamiento de eventos~\parencite{richardson2018}.
 
-Un evento representa un hecho significativo que ha ocurrido dentro del sistema. A diferencia de una solicitud directa, un evento no expresa una orden hacia otro servicio, sino que informa que algo ya sucedió. Por ejemplo, la creación de una orden, la confirmación de un pago, la actualización de inventario o el registro de un usuario pueden considerarse eventos relevantes dentro de un sistema empresarial.
+Un evento representa un hecho significativo que ha ocurrido dentro del sistema. A diferencia de una solicitud directa, un evento no expresa una orden hacia otro servicio, sino que informa que algo ya sucedió. Por ejemplo, la creación de una orden (\textit{OrderCreated}), la confirmación de un pago (\textit{PaymentConfirmed}) o la actualización de inventario (\textit{StockReserved}).
 
-Este enfoque permite que los servicios se mantengan desacoplados, ya que el productor del evento no necesita conocer directamente a los consumidores. El productor simplemente publica el evento en un broker de mensajería, y los consumidores interesados reaccionan de acuerdo con sus propias reglas de negocio.
-
-La Figura \ref{fig:arquitectura_eventos} muestra una representación general de una arquitectura orientada a eventos.
+Este enfoque permite que los servicios se mantengan desacoplados, ya que el productor del evento no necesita conocer directamente a los consumidores. La Figura~\ref{fig:arquitectura_eventos} muestra una representación general de una arquitectura orientada a eventos.
 
 \input{diagrams/arquitectura_eventos}
 
-En este modelo intervienen tres elementos principales: el productor de eventos, el broker de eventos y los consumidores de eventos. El productor genera el evento cuando ocurre un cambio importante en el sistema. El broker recibe y distribuye el evento. Finalmente, los consumidores procesan el evento de acuerdo con la funcionalidad que cumplen dentro del sistema.
+En este modelo intervienen tres elementos principales:
 
-Una de las principales ventajas de este enfoque es el desacoplamiento entre servicios. En una arquitectura tradicional, un servicio puede depender directamente de otro para completar una operación. En cambio, en una arquitectura orientada a eventos, el servicio productor no necesita esperar la respuesta de los consumidores, lo cual mejora la disponibilidad y reduce la propagación de fallos.
+\begin{itemize}
+    \item \textbf{Productor de eventos}: genera el evento cuando ocurre un cambio importante en el sistema.
+    \item \textbf{Broker de eventos}: recibe, almacena y distribuye los eventos.
+    \item \textbf{Consumidor de eventos}: procesa el evento de acuerdo con su funcionalidad de negocio.
+\end{itemize}
 
-Otra ventaja importante es la escalabilidad. Los consumidores pueden replicarse para procesar grandes volúmenes de eventos, permitiendo que el sistema soporte una mayor carga de trabajo. Además, nuevos consumidores pueden suscribirse a eventos existentes sin modificar el servicio productor.
-
-Sin embargo, la arquitectura orientada a eventos también introduce desafíos. Entre ellos se encuentran la gestión del orden de los eventos, el manejo de duplicados, la trazabilidad de los mensajes, la consistencia eventual y la necesidad de garantizar que los eventos no se pierdan antes de ser publicados.
-
-En el contexto de los microservicios, EDA permite que diferentes servicios reaccionen ante cambios de estado sin depender de llamadas directas. Por ejemplo, cuando un servicio de pedidos genera el evento \textit{OrderCreated}, los servicios de inventario, pagos y notificaciones pueden procesarlo de manera independiente.
+Una de las principales ventajas de EDA es la extensibilidad: nuevos consumidores pueden suscribirse a eventos existentes sin modificar el servicio productor. Sin embargo, también introduce desafíos como la gestión del orden de los eventos, el manejo de duplicados y la necesidad de garantizar que los eventos no se pierdan antes de ser publicados~\parencite{kleppmann2017}.
 
 Este tipo de arquitectura es especialmente relevante para la presente investigación, ya que el patrón \textit{Transactional Outbox} busca resolver uno de los principales problemas asociados a la publicación de eventos: garantizar que un evento generado por una operación de negocio sea almacenado y publicado de forma confiable.
 
 \section{SISTEMAS DE MENSAJERÍA Y BROKERS DE EVENTOS}
 
-Los sistemas de mensajería constituyen uno de los componentes fundamentales de las arquitecturas distribuidas modernas. Su principal objetivo es permitir el intercambio de información entre aplicaciones, servicios o componentes de software de manera desacoplada, confiable y escalable.
+Los sistemas de mensajería constituyen uno de los componentes fundamentales de las arquitecturas distribuidas modernas. Su principal objetivo es permitir el intercambio de información entre servicios de manera desacoplada, confiable y escalable.
 
-Dentro de una arquitectura orientada a eventos, la comunicación entre productores y consumidores suele realizarse mediante un intermediario denominado \textit{broker de eventos}. Este componente recibe los mensajes enviados por los productores, los almacena temporalmente y posteriormente los distribuye a los consumidores interesados.
-
-La Figura \ref{fig:broker_eventos} muestra el papel que desempeña un broker dentro de una arquitectura basada en eventos.
+Dentro de una arquitectura orientada a eventos, la comunicación entre productores y consumidores se realiza mediante un intermediario denominado \textit{broker de eventos}. La Figura~\ref{fig:broker_eventos} muestra el papel que desempeña un broker dentro de esta arquitectura.
 
 \input{diagrams/broker_eventos}
 
-El uso de brokers permite desacoplar completamente a los productores de los consumidores. El servicio que genera un evento no necesita conocer qué aplicaciones lo utilizarán posteriormente ni cuántos consumidores existen.
-
-Entre las principales ventajas que ofrecen los sistemas de mensajería se encuentran:
-
-\begin{itemize}
-    \item Reducción del acoplamiento entre servicios.
-    \item Mayor disponibilidad del sistema.
-    \item Capacidad de almacenamiento temporal de mensajes.
-    \item Escalabilidad horizontal.
-    \item Balanceo de carga entre consumidores.
-    \item Tolerancia a fallos mediante mecanismos de persistencia y reintento.
-\end{itemize}
-
-Dependiendo de la tecnología utilizada, los brokers pueden implementar diferentes modelos de comunicación, tales como colas de mensajes, publicación-suscripción o flujos de eventos distribuidos.
-
-En la actualidad, dos de las plataformas más utilizadas para implementar arquitecturas orientadas a eventos son Apache Kafka y RabbitMQ.
-
 \subsection{Apache Kafka}
 
-Apache Kafka es una plataforma distribuida de procesamiento y transmisión de eventos desarrollada originalmente por LinkedIn y posteriormente donada a la Apache Software Foundation.
+Apache Kafka es una plataforma distribuida de procesamiento y transmisión de eventos desarrollada originalmente por LinkedIn y posteriormente donada a la Apache Software Foundation~\parencite{narkhede2017}.
 
-Kafka organiza la información en estructuras denominadas \textit{topics}, dentro de las cuales los eventos son almacenados de forma secuencial y persistente. Los consumidores pueden leer los eventos a su propio ritmo manteniendo un identificador denominado \textit{offset}, que indica la posición del último mensaje procesado.
+Kafka organiza la información en estructuras denominadas \textit{topics}, dentro de las cuales los eventos son almacenados de forma secuencial y persistente. Los consumidores pueden leer los eventos a su propio ritmo manteniendo un identificador denominado \textit{offset}. La Tabla~\ref{tab:kafka_concepts} describe los conceptos fundamentales de Kafka.
 
-Entre las principales características de Kafka destacan:
+\begin{table}[H]
+    \centering
+    \caption{Conceptos fundamentales de Apache Kafka.}
+    \begin{tabular}{|l|p{8cm}|}
+        \hline
+        \textbf{Concepto} & \textbf{Descripción} \\
+        \hline
+        Topic & Canal lógico donde se publican los eventos. \\
+        \hline
+        Partition & División de un topic para permitir paralelismo. \\
+        \hline
+        Producer & Componente que publica eventos en un topic. \\
+        \hline
+        Consumer & Componente que lee eventos de un topic. \\
+        \hline
+        Consumer Group & Conjunto de consumidores que procesan particiones de forma coordinada. \\
+        \hline
+        Offset & Posición del último mensaje leído por un consumidor. \\
+        \hline
+        Broker & Nodo del clúster de Kafka que almacena y sirve datos. \\
+        \hline
+    \end{tabular}
+    \label{tab:kafka_concepts}
+\end{table}
 
-\begin{itemize}
-    \item Alta capacidad de procesamiento.
-    \item Persistencia de eventos en disco.
-    \item Replicación automática.
-    \item Tolerancia a fallos.
-    \item Escalabilidad horizontal.
-    \item Procesamiento de grandes volúmenes de datos en tiempo real.
-\end{itemize}
-
-Debido a estas características, Kafka es ampliamente utilizado en sistemas empresariales que requieren procesamiento masivo de eventos y arquitecturas de microservicios de gran escala.
+Kafka es ampliamente utilizado en sistemas que requieren procesamiento masivo de eventos, alta disponibilidad y arquitecturas de microservicios de gran escala.
 
 \subsection{RabbitMQ}
 
@@ -307,99 +218,58 @@ RabbitMQ es un broker de mensajería basado en el protocolo AMQP (\textit{Advanc
 
 A diferencia de Kafka, RabbitMQ se basa principalmente en colas de mensajes. Los productores envían mensajes a un componente denominado \textit{exchange}, el cual se encarga de enrutar dichos mensajes hacia una o varias colas según reglas de configuración específicas.
 
-Entre sus principales características se encuentran:
-
-\begin{itemize}
-    \item Facilidad de configuración.
-    \item Soporte para múltiples patrones de enrutamiento.
-    \item Confirmación de entrega de mensajes.
-    \item Reintentos automáticos.
-    \item Compatibilidad con múltiples lenguajes de programación.
-\end{itemize}
-
-RabbitMQ suele utilizarse en sistemas empresariales donde la prioridad principal es garantizar la entrega confiable de mensajes y la integración entre aplicaciones heterogéneas.
-
 \subsection{Importancia de los Brokers en la Entrega Confiable de Eventos}
 
-A pesar de las capacidades que ofrecen Kafka y RabbitMQ, la existencia de un broker no garantiza por sí sola que un evento sea publicado correctamente.
+A pesar de las capacidades que ofrecen Kafka y RabbitMQ, la existencia de un broker no garantiza por sí sola que un evento sea publicado correctamente. Cuando una aplicación debe almacenar información en una base de datos y simultáneamente publicar un evento en el broker, si una de estas operaciones falla, el sistema puede entrar en un estado inconsistente.
 
-Uno de los problemas más importantes surge cuando una aplicación debe almacenar información en una base de datos y, simultáneamente, publicar un evento en el broker. Si una de estas operaciones falla mientras la otra se completa correctamente, el sistema puede entrar en un estado inconsistente.
-
-Esta situación es conocida como el problema de la doble escritura (\textit{Dual Write Problem}) y representa uno de los principales desafíos de las arquitecturas orientadas a eventos.
-
-Por esta razón, resulta necesario utilizar mecanismos adicionales que permitan garantizar la consistencia entre la base de datos y el sistema de mensajería. Entre las soluciones más utilizadas destaca el patrón \textit{Transactional Outbox}, tema que será desarrollado en las siguientes secciones.
+Esta situación es conocida como el problema de la doble escritura (\textit{Dual Write Problem}) y será desarrollada en la siguiente sección.
 
 \section{CONSISTENCIA DE DATOS EN SISTEMAS DISTRIBUIDOS}
 
-La consistencia de datos es uno de los principales desafíos en los sistemas distribuidos. En una aplicación monolítica tradicional, las operaciones suelen ejecutarse dentro de una única base de datos, lo que permite utilizar transacciones locales para garantizar que los datos pasen de un estado válido a otro estado válido.
+La consistencia de datos es uno de los principales desafíos en los sistemas distribuidos. En una aplicación monolítica, las operaciones se ejecutan dentro de una única base de datos mediante transacciones ACID. En una arquitectura distribuida, los datos pueden estar repartidos entre múltiples servicios y bases de datos independientes~\parencite{kleppmann2017}.
 
-En cambio, en una arquitectura distribuida, los datos pueden estar repartidos entre múltiples servicios, bases de datos y componentes independientes. Esta distribución permite mejorar la escalabilidad y disponibilidad del sistema, pero también introduce dificultades para mantener una visión uniforme y actualizada de la información.
+\subsection{Consistencia Fuerte y Consistencia Eventual}
 
-En los microservicios, cada servicio suele administrar su propia base de datos. Esta independencia favorece el bajo acoplamiento, pero impide que una transacción local abarque directamente los datos de otros servicios. Por esta razón, una operación de negocio que involucra varios microservicios puede generar estados temporales de inconsistencia.
+La \textbf{consistencia fuerte} establece que todos los componentes del sistema observan el mismo estado de los datos inmediatamente después de que una operación se confirma. Este modelo es común en sistemas centralizados con transacciones ACID.
 
-Por ejemplo, en un sistema de ventas, el servicio de pedidos puede registrar una orden, mientras que el servicio de inventario debe reservar productos y el servicio de pagos debe confirmar la transacción. Si alguno de estos pasos falla o se retrasa, el sistema puede quedar temporalmente inconsistente.
+La \textbf{consistencia eventual} es un modelo en el cual los datos pueden no estar sincronizados inmediatamente después de una operación, pero alcanzarán un estado consistente después de cierto tiempo~\parencite{vogels2009}. Este enfoque es frecuente en arquitecturas distribuidas modernas porque permite priorizar la disponibilidad y la escalabilidad.
 
-\subsection{Consistencia Fuerte}
-
-La consistencia fuerte establece que todos los componentes del sistema deben observar el mismo estado de los datos inmediatamente después de que una operación se confirma.
-
-Este modelo es común en sistemas centralizados o en bases de datos tradicionales, donde las transacciones ACID garantizan atomicidad, consistencia, aislamiento y durabilidad.
-
-La principal ventaja de la consistencia fuerte es que evita lecturas desactualizadas y reduce la posibilidad de conflictos entre operaciones. Sin embargo, en sistemas distribuidos puede generar altos costos de coordinación, mayor latencia y menor disponibilidad.
-
-Para lograr consistencia fuerte entre múltiples nodos o servicios, normalmente se requieren mecanismos de bloqueo, consenso o transacciones distribuidas. Estos mecanismos pueden afectar el rendimiento y la escalabilidad del sistema.
-
-\subsection{Consistencia Eventual}
-
-La consistencia eventual es un modelo en el cual los datos pueden no estar sincronizados inmediatamente después de una operación, pero alcanzarán un estado consistente después de cierto tiempo.
-
-Este enfoque es frecuente en arquitecturas distribuidas modernas porque permite priorizar la disponibilidad y la escalabilidad sobre la consistencia inmediata.
-
-En una arquitectura basada en eventos, un servicio puede modificar su estado local y posteriormente publicar un evento para que otros servicios actualicen su propia información. Durante el intervalo entre la modificación inicial y el procesamiento del evento por parte de los demás servicios, puede existir una inconsistencia temporal.
-
-Por ejemplo, un pedido puede ser creado correctamente en el servicio de pedidos, pero el servicio de inventario puede tardar algunos segundos en reservar los productos asociados. Durante ese tiempo, el sistema se encuentra en un estado intermedio, pero eventualmente alcanzará la consistencia esperada.
-
-La consistencia eventual no implica ausencia de control, sino un cambio en la forma de gestionar la sincronización de datos. En lugar de depender de una única transacción global, el sistema utiliza eventos, reintentos, compensaciones e idempotencia para alcanzar un estado coherente.
+En una arquitectura basada en eventos, un servicio modifica su estado local y posteriormente publica un evento para que otros servicios actualicen su propia información. Durante el intervalo entre la modificación y el procesamiento del evento por parte de los demás servicios, puede existir una inconsistencia temporal que se resuelve eventualmente.
 
 \subsection{Teorema CAP}
 
-El teorema CAP establece que un sistema distribuido no puede garantizar simultáneamente las tres propiedades siguientes: consistencia, disponibilidad y tolerancia a particiones.
+El teorema CAP, formulado por \textcite{brewer2012}, establece que un sistema distribuido no puede garantizar simultáneamente las tres propiedades siguientes:
 
-La consistencia significa que todos los nodos observan el mismo valor de los datos al mismo tiempo. La disponibilidad implica que cada solicitud recibe una respuesta, aunque algunos nodos puedan estar fallando. La tolerancia a particiones significa que el sistema continúa funcionando incluso cuando existen fallos de comunicación entre nodos.
+\begin{itemize}
+    \item \textbf{Consistencia (C)}: todos los nodos observan el mismo valor de los datos al mismo tiempo.
+    \item \textbf{Disponibilidad (A)}: cada solicitud recibe una respuesta, aunque algunos nodos puedan estar fallando.
+    \item \textbf{Tolerancia a particiones (P)}: el sistema continúa funcionando incluso ante fallos de comunicación entre nodos.
+\end{itemize}
 
-En presencia de una partición de red, el sistema debe elegir entre mantener la consistencia inmediata o preservar la disponibilidad. Por esta razón, muchas arquitecturas distribuidas modernas adoptan modelos de consistencia eventual.
+En presencia de una partición de red, el sistema debe elegir entre mantener la consistencia inmediata o preservar la disponibilidad. Por esta razón, muchas arquitecturas de microservicios adoptan modelos de consistencia eventual combinados con mecanismos de compensación y patrones como \textit{Transactional Outbox}.
 
-En el contexto de los microservicios, esta decisión resulta especialmente importante, ya que los servicios suelen estar distribuidos en diferentes procesos, contenedores o servidores. La comunicación entre ellos puede fallar, retrasarse o duplicarse, por lo que el sistema debe estar preparado para operar bajo condiciones imperfectas.
+\subsection{Transacciones Distribuidas y sus Limitaciones}
 
-\subsection{Transacciones Distribuidas}
+Una transacción distribuida es una operación que involucra múltiples recursos o bases de datos independientes. El protocolo clásico \textit{Two-Phase Commit} (2PC) coordina a los participantes en dos fases: preparación y confirmación~\parencite{tanenbaum2017}.
 
-Una transacción distribuida es una operación que involucra múltiples recursos, servicios o bases de datos independientes. Su objetivo es garantizar que todos los participantes confirmen o reviertan sus operaciones de manera coordinada.
+Aunque 2PC puede garantizar atomicidad, presenta limitaciones importantes en sistemas modernos:
 
-Uno de los mecanismos clásicos para implementar transacciones distribuidas es el protocolo \textit{Two Phase Commit} o 2PC. Este protocolo coordina a los participantes en dos fases: una fase de preparación y una fase de confirmación.
+\begin{itemize}
+    \item Bloqueo de recursos durante la fase de preparación.
+    \item Dependencia de un coordinador central (punto único de falla).
+    \item Reducción significativa de disponibilidad y rendimiento.
+    \item Incompatibilidad con brokers de mensajería que no soportan el protocolo XA.
+\end{itemize}
 
-En la primera fase, el coordinador pregunta a todos los participantes si están preparados para confirmar la transacción. En la segunda fase, si todos responden afirmativamente, el coordinador ordena confirmar los cambios. Si alguno falla, se ordena la reversión.
-
-Aunque este mecanismo puede garantizar atomicidad entre varios recursos, presenta limitaciones importantes en sistemas modernos. Entre ellas se encuentran el bloqueo de recursos, la dependencia de un coordinador central, la complejidad operativa y la reducción de disponibilidad.
-
-Por estas razones, en arquitecturas de microservicios se suelen preferir mecanismos basados en consistencia eventual y eventos, como el patrón Saga y el patrón \textit{Transactional Outbox}.
-
-\subsection{Relación con la Entrega de Eventos}
-
-La consistencia de datos en sistemas distribuidos está estrechamente relacionada con la entrega confiable de eventos.
-
-Cuando un microservicio modifica su base de datos local y necesita informar dicho cambio a otros servicios, debe publicar un evento. Sin embargo, si la escritura en la base de datos y la publicación del evento no se realizan de forma coordinada, pueden generarse inconsistencias.
-
-Este escenario da origen al problema de la doble escritura, conocido como \textit{Dual Write Problem}. Dicho problema representa uno de los principales obstáculos para garantizar la confiabilidad en arquitecturas orientadas a eventos y será desarrollado en la siguiente sección.
+Por estas razones, en arquitecturas de microservicios se prefieren mecanismos basados en consistencia eventual y eventos, como el patrón \textit{Transactional Outbox}.
 
 \section{PROBLEMA DE LA DOBLE ESCRITURA}
 
-El problema de la doble escritura, conocido también como \textit{Dual Write Problem}, es uno de los principales desafíos en arquitecturas de microservicios orientadas a eventos. Este problema aparece cuando un servicio debe realizar dos operaciones relacionadas sobre sistemas diferentes, normalmente una operación de escritura en una base de datos y una operación de publicación de eventos en un broker de mensajería.
+El problema de la doble escritura, conocido también como \textit{Dual Write Problem}, es uno de los principales desafíos en arquitecturas de microservicios orientadas a eventos~\parencite{richardson2018}. Este problema aparece cuando un servicio debe realizar dos operaciones relacionadas sobre sistemas diferentes: una escritura en una base de datos y una publicación de eventos en un broker de mensajería.
 
-En una aplicación tradicional, una operación de negocio puede ejecutarse dentro de una única transacción local. Sin embargo, en arquitecturas distribuidas, la operación de negocio suele involucrar más de un recurso. Por ejemplo, un servicio puede necesitar guardar una orden en su base de datos y luego publicar un evento para informar a otros servicios que dicha orden fue creada.
+El problema surge porque ambas operaciones no forman parte de una misma transacción atómica. La base de datos y el broker de eventos son sistemas independientes, por lo tanto, no existe una garantía directa de que ambas operaciones se completen correctamente.
 
-El problema surge porque ambas operaciones no forman parte de una misma transacción atómica. La base de datos y el broker de eventos son sistemas independientes, por lo tanto, no existe una garantía directa de que ambas operaciones se completen correctamente al mismo tiempo.
-
-La Figura \ref{fig:doble_escritura} representa un escenario típico del problema de la doble escritura.
+La Figura~\ref{fig:doble_escritura} representa un escenario típico del problema de la doble escritura.
 
 \input{diagrams/doble_escritura}
 
@@ -407,330 +277,275 @@ Como se observa en la figura, el microservicio confirma correctamente la operaci
 
 \subsection{Escenarios de Inconsistencia}
 
-El problema de la doble escritura puede presentarse en diferentes escenarios. Uno de los casos más comunes ocurre cuando la operación de base de datos se ejecuta correctamente, pero la publicación del evento falla debido a una caída del broker, un error de red o una excepción en la aplicación.
+Los escenarios de inconsistencia que pueden producirse son:
 
-También puede ocurrir el caso contrario: el evento se publica en el broker, pero la transacción de base de datos falla posteriormente. En este escenario, los consumidores reciben un evento que representa un cambio que realmente no fue confirmado en la base de datos.
-
-Otro escenario frecuente aparece cuando el servicio intenta reenviar el evento después de un error. Si el primer envío fue exitoso pero la aplicación no recibió confirmación, el sistema puede publicar el mismo evento más de una vez, generando duplicados en los consumidores.
-
-Estos escenarios pueden resumirse de la siguiente manera:
-
-\begin{itemize}
-    \item Los datos se guardan correctamente, pero el evento no se publica.
-    \item El evento se publica, pero los datos no se confirman en la base de datos.
-    \item El evento se publica más de una vez debido a reintentos.
-    \item El broker no está disponible temporalmente.
-    \item La aplicación falla después de guardar los datos y antes de publicar el evento.
-\end{itemize}
+\begin{enumerate}
+    \item \textbf{Datos guardados, evento no publicado}: la base de datos confirma la operación, pero el broker no recibe el evento debido a una falla de red o caída del servicio.
+    \item \textbf{Evento publicado, datos no confirmados}: el evento se publica exitosamente, pero la transacción de base de datos falla y se revierte.
+    \item \textbf{Evento duplicado}: ante reintentos sin control, el mismo evento se publica múltiples veces.
+    \item \textbf{Broker no disponible}: la aplicación completa la operación de base de datos pero no puede conectarse al broker.
+\end{enumerate}
 
 \subsection{Impacto en los Microservicios}
 
-El impacto del problema de la doble escritura puede ser considerable, especialmente en sistemas donde múltiples servicios dependen de eventos para coordinar procesos de negocio.
-
-Por ejemplo, en un sistema de ventas, si el servicio de pedidos guarda una orden pero no publica el evento \textit{OrderCreated}, los servicios de inventario, pagos, facturación y notificaciones no serán informados de la nueva orden. Como consecuencia, el sistema puede quedar en un estado inconsistente.
-
-De manera similar, si un evento se publica sin que la operación de base de datos haya sido confirmada, los consumidores pueden ejecutar acciones sobre información inexistente o inválida.
-
-Este tipo de inconsistencias puede generar problemas como:
-
-\begin{itemize}
-    \item Pérdida de eventos importantes.
-    \item Procesamiento duplicado de operaciones.
-    \item Desincronización entre servicios.
-    \item Errores en procesos de negocio.
-    \item Dificultad para recuperar el estado correcto del sistema.
-    \item Incremento de costos de mantenimiento y soporte.
-\end{itemize}
-
-\subsection{Limitaciones de Soluciones Simples}
-
-Una solución aparentemente sencilla sería publicar el evento inmediatamente después de guardar los datos. Sin embargo, esta estrategia no elimina el problema, ya que la aplicación puede fallar entre ambas operaciones.
-
-Otra alternativa sería publicar el evento antes de confirmar la transacción de base de datos. Esta solución tampoco es segura, porque el evento podría ser consumido por otros servicios aunque los datos no hayan sido confirmados.
-
-También se podría intentar utilizar reintentos automáticos. Aunque los reintentos ayudan ante fallos temporales, por sí solos no garantizan consistencia. Si no existe un registro persistente del evento, la aplicación puede perder la información necesaria para reenviarlo después de una caída.
-
-Por esta razón, el problema de la doble escritura no puede resolverse de forma confiable únicamente con llamadas directas, bloques \texttt{try-catch} o reintentos simples.
+El impacto del problema de la doble escritura puede ser considerable en sistemas donde múltiples servicios dependen de eventos para coordinar procesos de negocio. Las consecuencias incluyen: pérdida de eventos críticos, procesamiento duplicado de operaciones, desincronización entre servicios y dificultad para recuperar el estado correcto del sistema.
 
 \subsection{Necesidad de un Mecanismo Confiable}
 
 Para resolver este problema es necesario utilizar un mecanismo que permita coordinar la persistencia de datos y la publicación de eventos sin depender de una transacción distribuida entre la base de datos y el broker.
 
-El objetivo es garantizar que si una operación de negocio se confirma, el evento asociado quede registrado de manera persistente. De esta forma, si ocurre una falla durante la publicación, el evento no se pierde y puede ser reenviado posteriormente.
-
-El patrón \textit{Transactional Outbox} responde precisamente a esta necesidad. Este patrón propone almacenar los eventos en una tabla especial dentro de la misma base de datos del servicio, utilizando la misma transacción que guarda los datos de negocio. Posteriormente, un proceso asíncrono se encarga de publicar los eventos pendientes hacia el broker.
-
-De esta manera, se evita la pérdida de eventos y se reduce el riesgo de inconsistencias entre la base de datos y el sistema de mensajería. Por esta razón, el patrón \textit{Transactional Outbox} será desarrollado en detalle en la siguiente sección.
+El patrón \textit{Transactional Outbox} responde precisamente a esta necesidad: almacena los eventos en una tabla especial dentro de la misma base de datos del servicio, utilizando la misma transacción que guarda los datos de negocio. Posteriormente, un proceso asíncrono se encarga de publicar los eventos pendientes hacia el broker.
 
 \section{PATRÓN TRANSACTIONAL OUTBOX}
 
-El patrón \textit{Transactional Outbox} es una solución ampliamente utilizada en arquitecturas basadas en microservicios para garantizar la entrega confiable de eventos sin necesidad de emplear transacciones distribuidas entre la base de datos y los sistemas de mensajería.
-
-Este patrón fue propuesto como una alternativa a los mecanismos tradicionales de coordinación distribuida, tales como el protocolo Two-Phase Commit (2PC), los cuales suelen introducir problemas de escalabilidad, disponibilidad y complejidad operativa en sistemas modernos.
+El patrón \textit{Transactional Outbox} es una solución arquitectónica ampliamente utilizada en microservicios para garantizar la entrega confiable de eventos sin emplear transacciones distribuidas~\parencite{richardson2018}. Fue formalizado por Chris Richardson como parte de su catálogo de patrones para microservicios.
 
 La idea principal consiste en almacenar los eventos de integración dentro de una tabla especial denominada \textit{Outbox}, utilizando la misma transacción de base de datos que persiste los datos de negocio. De esta manera, si la transacción se confirma exitosamente, tanto los datos como el evento quedan almacenados de forma atómica.
 
 Posteriormente, un componente independiente se encarga de leer periódicamente los registros pendientes de la tabla Outbox y publicarlos en el broker de mensajería correspondiente.
 
-Este enfoque permite desacoplar la persistencia de datos de la publicación de eventos, eliminando el problema de la doble escritura y garantizando que ningún evento sea perdido incluso ante fallos de la aplicación o interrupciones temporales de la infraestructura.
-
-La Figura \ref{fig:outbox_general} muestra la arquitectura general del patrón.
+La Figura~\ref{fig:outbox_general} muestra la arquitectura general del patrón.
 
 \input{diagrams/transactional_outbox_general}
 
-\subsection{Funcionamiento General}
+\subsection{Funcionamiento del Patrón}
 
-El funcionamiento del patrón puede dividirse en dos fases principales. La primera corresponde a la persistencia transaccional de los datos de negocio y del evento asociado. La segunda corresponde a la publicación asíncrona de dicho evento hacia el broker de mensajería.
+El funcionamiento del patrón puede dividirse en dos fases principales:
 
-Durante la ejecución de una operación de negocio, el servicio almacena tanto la información principal como el evento correspondiente dentro de la misma transacción local. Esto garantiza que ambas operaciones se confirmen o reviertan conjuntamente.
+\begin{enumerate}
+    \item \textbf{Fase transaccional}: el servicio almacena los datos de negocio y el evento asociado dentro de la misma transacción local. Esto garantiza atomicidad: ambas operaciones se confirman o se revierten conjuntamente.
+    \item \textbf{Fase de publicación}: un proceso independiente (Polling Publisher) consulta periódicamente la tabla Outbox, identifica eventos pendientes, los publica en el broker y los marca como procesados.
+\end{enumerate}
 
-Una vez completada la transacción, un proceso independiente consulta periódicamente la tabla Outbox para identificar eventos pendientes de publicación. Los eventos encontrados son enviados al broker y posteriormente marcados como procesados o eliminados según la estrategia implementada.
-
-Gracias a esta separación de responsabilidades, el sistema puede tolerar fallos temporales del broker sin comprometer la consistencia de los datos almacenados.
-
-La Figura \ref{fig:outbox_flow} presenta el flujo operativo del patrón.
+La Figura~\ref{fig:outbox_flow} presenta el flujo operativo completo del patrón.
 
 \input{diagrams/transactional_outbox_flow}
 
 \subsection{Estructura de la Tabla Outbox}
 
-La implementación del patrón requiere una tabla especializada para almacenar los eventos pendientes de publicación.
-
-Una estructura típica incluye los siguientes atributos:
+La implementación del patrón requiere una tabla especializada para almacenar los eventos pendientes de publicación. La Tabla~\ref{tab:outbox} presenta una estructura típica.
 
 \begin{table}[H]
     \centering
-    \caption{Estructura típica de una tabla Outbox}
+    \caption{Estructura típica de una tabla Outbox.}
     \begin{tabular}{|l|l|p{6cm}|}
         \hline
-        Campo & Tipo & Descripción \\
+        \textbf{Campo} & \textbf{Tipo} & \textbf{Descripción} \\
         \hline
-        id & UUID & Identificador único del evento \\
+        id & UUID & Identificador único del evento. \\
         \hline
-        aggregate\_id & UUID & Identificador de la entidad asociada \\
+        aggregate\_type & VARCHAR & Tipo de entidad que generó el evento. \\
         \hline
-        event\_type & VARCHAR & Tipo de evento generado \\
+        aggregate\_id & UUID & Identificador de la entidad asociada. \\
         \hline
-        payload & JSON & Información completa del evento \\
+        event\_type & VARCHAR & Tipo de evento generado. \\
         \hline
-        created\_at & TIMESTAMP & Fecha de creación \\
+        payload & JSONB & Información completa del evento serializada. \\
         \hline
-        processed & BOOLEAN & Estado de publicación \\
+        status & VARCHAR & Estado del evento (PENDING, SENT, FAILED). \\
         \hline
-        processed\_at & TIMESTAMP & Fecha de procesamiento \\
+        retry\_count & INTEGER & Número de reintentos realizados. \\
+        \hline
+        created\_at & TIMESTAMP & Fecha y hora de creación. \\
+        \hline
+        processed\_at & TIMESTAMP & Fecha y hora de publicación exitosa. \\
         \hline
     \end{tabular}
     \label{tab:outbox}
 \end{table}
 
-\subsection{Ventajas}
+\subsection{Estrategias de Publicación}
 
-El patrón Transactional Outbox ofrece múltiples beneficios para sistemas distribuidos:
+Existen dos estrategias principales para la publicación de eventos desde la tabla Outbox:
 
 \begin{itemize}
-    \item Garantiza que los eventos no se pierdan.
-    \item Elimina el problema de la doble escritura.
-    \item Evita la necesidad de transacciones distribuidas.
-    \item Mejora la confiabilidad del sistema.
-    \item Facilita la integración basada en eventos.
-    \item Permite recuperación ante fallos.
-    \item Mantiene independencia entre servicios.
-    \item Es compatible con Kafka, RabbitMQ y otros brokers.
+    \item \textbf{Polling Publisher}: un proceso programado consulta periódicamente la tabla Outbox para identificar eventos pendientes. Es la estrategia más simple de implementar y no requiere infraestructura adicional.
+    \item \textbf{Transaction Log Tailing}: una herramienta de CDC (como Debezium) monitorea el log transaccional de la base de datos y detecta automáticamente las inserciones en la tabla Outbox.
 \end{itemize}
 
-\subsection{Limitaciones}
+La presente investigación implementará la estrategia de \textit{Polling Publisher} por su simplicidad y menor dependencia de infraestructura externa.
 
-Aunque Transactional Outbox proporciona una solución robusta, también introduce ciertos desafíos.
+\subsection{Ventajas del Patrón}
 
-La presencia de una tabla adicional implica un mayor consumo de almacenamiento y requiere mecanismos periódicos de limpieza para evitar un crecimiento excesivo de registros históricos.
+El patrón Transactional Outbox ofrece múltiples beneficios~\parencite{richardson2018}:
 
-Asimismo, la publicación de eventos deja de ser inmediata y pasa a depender de procesos de lectura y sincronización. Esto introduce un pequeño retraso entre la confirmación de la transacción y la disponibilidad del evento para otros servicios.
+\begin{itemize}
+    \item Garantiza que los eventos no se pierdan al almacenarlos transaccionalmente.
+    \item Elimina el problema de la doble escritura.
+    \item Evita la necesidad de transacciones distribuidas (2PC).
+    \item Permite recuperación ante fallos temporales del broker.
+    \item Mantiene independencia entre el servicio productor y los consumidores.
+    \item Es compatible con cualquier broker de mensajería.
+\end{itemize}
 
-Otro aspecto importante es que el patrón no evita completamente la posibilidad de mensajes duplicados. Dependiendo de la estrategia de recuperación implementada, un evento puede publicarse más de una vez. Por esta razón, los consumidores deben diseñarse siguiendo principios de idempotencia.
+\subsection{Limitaciones del Patrón}
 
-\subsection{Relación con el Problema de Investigación}
+Aunque Transactional Outbox proporciona una solución robusta, también introduce ciertos desafíos:
 
-El presente trabajo se enfoca en la aplicación del patrón Transactional Outbox para garantizar la consistencia entre las operaciones de negocio y la publicación de eventos en una arquitectura de microservicios.
-
-La solución propuesta busca eliminar los riesgos asociados al problema de la doble escritura, mejorar la confiabilidad del sistema y asegurar que los eventos generados por los servicios sean entregados de manera consistente aun en presencia de fallos temporales de infraestructura.
-
-Por esta razón, el patrón Transactional Outbox constituye el fundamento conceptual sobre el cual se desarrolla la propuesta tecnológica presentada en el capítulo correspondiente al marco aplicativo.
-
-
+\begin{itemize}
+    \item La tabla Outbox requiere mecanismos de limpieza para evitar crecimiento excesivo.
+    \item La publicación no es inmediata sino diferida (latencia entre escritura y publicación).
+    \item No evita completamente la posibilidad de eventos duplicados (\textit{at-least-once delivery}).
+    \item Los consumidores deben diseñarse con idempotencia para manejar duplicados.
+\end{itemize}
 
 \section{IDEMPOTENCIA Y ENTREGA CONFIABLE DE EVENTOS}
 
-La entrega confiable de eventos es un aspecto fundamental en arquitecturas orientadas a eventos y sistemas distribuidos. Cuando un microservicio publica un evento, se espera que dicho evento llegue correctamente a los consumidores interesados y que sea procesado sin generar inconsistencias en el sistema.
-
-Sin embargo, en entornos distribuidos no siempre es posible garantizar que un mensaje sea entregado exactamente una sola vez. Fallos de red, reinicios de servicios, errores temporales del broker o mecanismos de reintento pueden provocar que un mismo evento sea entregado más de una vez.
-
-Por esta razón, la confiabilidad en la entrega de eventos no depende únicamente del broker de mensajería o del publicador, sino también del diseño de los consumidores. En este contexto, la idempotencia se convierte en un principio esencial para evitar efectos secundarios no deseados.
+La entrega confiable de eventos es un aspecto fundamental en arquitecturas orientadas a eventos. En entornos distribuidos no siempre es posible garantizar que un mensaje sea entregado exactamente una sola vez~\parencite{kleppmann2017}. Fallos de red, reinicios de servicios o mecanismos de reintento pueden provocar entregas duplicadas.
 
 \subsection{Modelos de Entrega de Mensajes}
 
-Los sistemas de mensajería suelen trabajar bajo diferentes modelos de entrega. Cada modelo ofrece garantías distintas respecto a la forma en que los mensajes son enviados y procesados por los consumidores.
+Los sistemas de mensajería trabajan bajo diferentes modelos de entrega, cada uno con garantías distintas. La Tabla~\ref{tab:delivery_models} resume estos modelos.
 
-\subsubsection{Entrega como máximo una vez}
+\begin{table}[H]
+    \centering
+    \caption{Modelos de entrega de mensajes en sistemas distribuidos.}
+    \begin{tabular}{|l|p{4.5cm}|p{4.5cm}|}
+        \hline
+        \textbf{Modelo} & \textbf{Garantía} & \textbf{Riesgo} \\
+        \hline
+        At-most-once & El mensaje se entrega como máximo una vez. & Pérdida de mensajes. \\
+        \hline
+        At-least-once & El mensaje se entrega al menos una vez. & Mensajes duplicados. \\
+        \hline
+        Exactly-once & El mensaje se procesa exactamente una vez. & Complejidad extrema de implementación. \\
+        \hline
+    \end{tabular}
+    \label{tab:delivery_models}
+\end{table}
 
-El modelo \textit{at-most-once delivery} establece que un mensaje será entregado como máximo una vez. En este enfoque, el mensaje puede perderse si ocurre una falla durante la transmisión o el procesamiento.
-
-Su principal ventaja es la simplicidad, ya que evita duplicados. Sin embargo, no es adecuado para procesos críticos donde la pérdida de eventos puede generar inconsistencias importantes.
-
-\subsubsection{Entrega al menos una vez}
-
-El modelo \textit{at-least-once delivery} garantiza que un mensaje será entregado al menos una vez. Si ocurre un fallo o no se recibe confirmación de procesamiento, el mensaje puede ser reenviado.
-
-Este modelo reduce la probabilidad de pérdida de eventos, pero introduce la posibilidad de mensajes duplicados. Por esta razón, los consumidores deben diseñarse para soportar la recepción repetida del mismo evento.
-
-\subsubsection{Entrega exactamente una vez}
-
-El modelo \textit{exactly-once delivery} busca que cada mensaje sea procesado exactamente una sola vez. Aunque algunos sistemas de mensajería ofrecen mecanismos relacionados con esta garantía, en la práctica su implementación completa en sistemas distribuidos es compleja y depende de múltiples condiciones.
-
-Por ello, muchas arquitecturas modernas prefieren combinar entrega al menos una vez con consumidores idempotentes.
+En la práctica, la mayoría de los sistemas distribuidos implementan \textit{at-least-once delivery} combinado con consumidores idempotentes, ya que \textit{exactly-once} es extremadamente difícil de garantizar en sistemas distribuidos~\parencite{kleppmann2017}.
 
 \subsection{Concepto de Idempotencia}
 
-La idempotencia es una propiedad mediante la cual una operación puede ejecutarse varias veces con los mismos datos y producir siempre el mismo resultado final.
-
-En el contexto de eventos, un consumidor idempotente es aquel que puede recibir el mismo evento más de una vez sin generar efectos duplicados en el sistema.
+La idempotencia es una propiedad mediante la cual una operación puede ejecutarse varias veces con los mismos datos y producir siempre el mismo resultado final. En el contexto de eventos, un consumidor idempotente puede recibir el mismo evento más de una vez sin generar efectos duplicados en el sistema.
 
 Por ejemplo, si un consumidor recibe dos veces el evento \textit{PaymentConfirmed}, no debería registrar dos pagos distintos. En cambio, debe detectar que el evento ya fue procesado y evitar repetir la operación.
 
-\subsection{Consumidor Idempotente}
+\subsection{Patrón Idempotent Consumer}
 
-El patrón \textit{Idempotent Consumer} propone que cada evento tenga un identificador único. Antes de procesar un evento, el consumidor verifica si dicho identificador ya fue registrado como procesado.
+El patrón \textit{Idempotent Consumer} propone que cada evento tenga un identificador único~\parencite{richardson2018}. Antes de procesar un evento, el consumidor verifica si dicho identificador ya fue registrado como procesado:
 
-Si el evento no existe en el registro de eventos procesados, el consumidor ejecuta la lógica de negocio y almacena el identificador del evento. Si el evento ya existe, el consumidor descarta el mensaje o lo marca como duplicado.
+\begin{enumerate}
+    \item Se recibe el evento con su identificador único.
+    \item Se consulta el registro de eventos procesados.
+    \item Si el evento no ha sido procesado, se ejecuta la lógica de negocio y se almacena el identificador.
+    \item Si el evento ya fue procesado, se descarta sin ejecutar acciones adicionales.
+\end{enumerate}
 
-La Figura \ref{fig:idempotencia_eventos} muestra un flujo básico de control de eventos duplicados mediante un consumidor idempotente.
+La Figura~\ref{fig:idempotencia_eventos} muestra el flujo de control de eventos duplicados mediante un consumidor idempotente.
 
 \input{diagrams/idempotencia_eventos}
 
-Este mecanismo permite reducir los efectos negativos de la entrega duplicada de mensajes y complementa al patrón \textit{Transactional Outbox}.
-
 \subsection{Relación con Transactional Outbox}
 
-El patrón \textit{Transactional Outbox} garantiza que los eventos sean registrados de manera persistente junto con los datos de negocio. Sin embargo, dependiendo del mecanismo de publicación y confirmación, un evento podría ser enviado más de una vez al broker.
+El patrón \textit{Transactional Outbox} garantiza que los eventos sean registrados de manera persistente (evitando pérdida), pero dependiendo del mecanismo de publicación, un evento podría ser enviado más de una vez. Por esta razón, Transactional Outbox se combina con consumidores idempotentes: Outbox evita la pérdida de eventos y la idempotencia evita que los duplicados produzcan inconsistencias.
 
-Por esta razón, Transactional Outbox suele combinarse con consumidores idempotentes. Mientras Outbox evita la pérdida de eventos, la idempotencia evita que los eventos duplicados produzcan inconsistencias.
-
-La combinación de ambos enfoques permite construir sistemas más confiables, especialmente en arquitecturas distribuidas donde los fallos temporales son inevitables.
-
-\subsection{Importancia en la Presente Investigación}
-
-En la presente investigación, la idempotencia se considera un elemento complementario para garantizar la entrega confiable de eventos.
-
-La librería propuesta debe permitir que los eventos sean generados, almacenados y publicados de manera confiable. No obstante, también debe contemplar que los sistemas consumidores puedan aplicar mecanismos de control para evitar efectos duplicados.
-
-De esta manera, la solución planteada no solo busca reducir la pérdida de eventos, sino también contribuir a una arquitectura más robusta y tolerante a fallos.
+La combinación de ambos enfoques permite construir sistemas más confiables en arquitecturas distribuidas donde los fallos temporales son inevitables.
 
 \section{CHANGE DATA CAPTURE (CDC)}
 
-Los sistemas distribuidos modernos requieren mecanismos eficientes para detectar cambios realizados en las bases de datos y propagarlos hacia otros componentes de la arquitectura. Una de las técnicas más utilizadas para este propósito es Change Data Capture (CDC).
+Change Data Capture (CDC) es una técnica que permite identificar, capturar y transmitir cambios realizados sobre los datos almacenados en una base de datos, convirtiéndolos en eventos que pueden ser consumidos por otros sistemas~\parencite{kleppmann2017}.
 
-CDC es un enfoque que permite identificar, capturar y transmitir cambios realizados sobre los datos almacenados en una base de datos, convirtiéndolos en eventos que pueden ser consumidos por otros sistemas.
+\subsection{Concepto y Métodos de Implementación}
 
-Esta técnica resulta especialmente útil en arquitecturas basadas en eventos, integración de microservicios, sincronización de datos y procesamiento en tiempo real.
-
-\subsection{Concepto de Change Data Capture}
-
-Change Data Capture es una estrategia mediante la cual las operaciones realizadas sobre una base de datos, tales como inserciones, actualizaciones y eliminaciones, son detectadas automáticamente y convertidas en eventos.
-
-A diferencia de los mecanismos tradicionales basados en consultas periódicas, CDC permite reaccionar a los cambios casi en tiempo real, reduciendo la latencia y la carga sobre la base de datos.
-
-La Figura \ref{fig:cdc_general} muestra la arquitectura general de CDC.
+A diferencia de los mecanismos tradicionales basados en consultas periódicas, CDC permite reaccionar a los cambios casi en tiempo real. La Figura~\ref{fig:cdc_general} muestra la arquitectura general de CDC.
 
 \input{diagrams/cdc_general}
 
-\subsection{Métodos para Implementar CDC}
-
-Existen diversas formas de implementar Change Data Capture dependiendo de las capacidades de la base de datos y de los requisitos del sistema.
-
-\subsubsection{Triggers}
-
-Los triggers permiten ejecutar lógica automáticamente cuando ocurre una operación INSERT, UPDATE o DELETE.
-
-Aunque son sencillos de implementar, pueden afectar el rendimiento de la base de datos debido a que agregan procesamiento adicional dentro de la transacción.
-
-\subsubsection{Polling}
-
-El enfoque de polling consiste en consultar periódicamente una tabla para detectar registros nuevos o modificados.
-
-Este mecanismo es simple y ampliamente utilizado en implementaciones de Transactional Outbox, aunque introduce cierta latencia y genera consultas recurrentes sobre la base de datos.
-
-\subsubsection{Lectura del Transaction Log}
-
-La lectura directa del log transaccional permite detectar cambios sin afectar las operaciones normales de la base de datos.
-
-Este enfoque ofrece mejor rendimiento y menor impacto sobre el sistema, ya que aprovecha la información que la base de datos genera internamente para garantizar la recuperación ante fallos.
-
-Actualmente es el método preferido por herramientas modernas de CDC.
-
-\subsection{Transaction Logs}
-
-Los sistemas gestores de bases de datos mantienen registros internos denominados transaction logs.
-
-Estos logs almacenan información sobre todas las operaciones ejecutadas dentro de las transacciones, permitiendo recuperar el estado de la base de datos en caso de fallos.
-
-Dependiendo del motor utilizado, estos registros reciben diferentes nombres:
+Existen tres métodos principales para implementar CDC:
 
 \begin{itemize}
-    \item PostgreSQL: Write Ahead Log (WAL).
-    \item MySQL: Binary Log (Binlog).
-    \item SQL Server: Transaction Log.
-    \item Oracle: Redo Log.
+    \item \textbf{Triggers}: ejecutan lógica automáticamente ante operaciones INSERT, UPDATE o DELETE. Afectan el rendimiento de la base de datos.
+    \item \textbf{Polling}: consulta periódica a la tabla para detectar cambios. Simple pero introduce latencia.
+    \item \textbf{Transaction Log Tailing}: lectura directa del log transaccional (WAL en PostgreSQL, Binlog en MySQL). Método preferido por su bajo impacto y mínima latencia.
 \end{itemize}
 
-CDC aprovecha estos registros para detectar cambios sin necesidad de consultar constantemente las tablas de negocio.
+\subsection{Debezium como Herramienta de CDC}
 
-\subsection{Debezium}
+Debezium es una plataforma de código abierto desarrollada por Red Hat para implementar CDC sobre diferentes motores de bases de datos~\parencite{debezium2020}. Su funcionamiento se basa en la lectura de los transaction logs y la generación automática de eventos publicados en Apache Kafka.
 
-Debezium es una plataforma de código abierto diseñada para implementar Change Data Capture sobre diferentes motores de bases de datos.
-
-Su funcionamiento se basa en la lectura de los transaction logs y la generación automática de eventos que pueden publicarse en plataformas de mensajería como Apache Kafka.
-
-Debezium soporta múltiples bases de datos, entre ellas PostgreSQL, MySQL, SQL Server, Oracle y MongoDB.
-
-La Figura \ref{fig:debezium_architecture} presenta una arquitectura simplificada utilizando Debezium.
+La Figura~\ref{fig:debezium_architecture} presenta la arquitectura de Debezium.
 
 \input{diagrams/debezium_architecture}
 
-\subsection{Ventajas de CDC}
-
-El uso de CDC ofrece múltiples beneficios en arquitecturas distribuidas.
-
-\begin{itemize}
-    \item Captura cambios casi en tiempo real.
-    \item Reduce la carga sobre la base de datos.
-    \item Minimiza consultas periódicas innecesarias.
-    \item Facilita la integración entre sistemas.
-    \item Permite construir arquitecturas orientadas a eventos.
-    \item Mejora la escalabilidad de la solución.
-\end{itemize}
-
-\subsection{Limitaciones de CDC}
-
-A pesar de sus ventajas, CDC también presenta ciertos desafíos.
-
-\begin{itemize}
-    \item Mayor complejidad de configuración.
-    \item Dependencia de características específicas del motor de base de datos.
-    \item Necesidad de componentes adicionales como Debezium o Kafka Connect.
-    \item Curva de aprendizaje superior respecto a soluciones basadas en polling.
-\end{itemize}
-
 \subsection{CDC y Transactional Outbox}
 
-CDC suele utilizarse como complemento del patrón Transactional Outbox.
+CDC suele utilizarse como complemento del patrón Transactional Outbox. La aplicación almacena los eventos en la tabla Outbox dentro de la transacción, y una herramienta CDC detecta automáticamente los nuevos registros y los publica hacia el broker. Esta combinación elimina la necesidad de un proceso de polling, pero requiere infraestructura adicional (Debezium, Kafka Connect).
 
-En este enfoque, la aplicación almacena los eventos dentro de la tabla Outbox durante la misma transacción que persiste los datos de negocio. Posteriormente, una herramienta CDC detecta automáticamente los nuevos registros insertados en la tabla Outbox y los publica hacia el broker de eventos.
+La presente investigación implementa la estrategia de polling como mecanismo principal de publicación, manteniendo CDC como alternativa documentada para escenarios de mayor escala.
 
-Esta combinación permite reducir la complejidad del componente publicador y elimina la necesidad de realizar consultas periódicas sobre la tabla Outbox.
+\section{TECNOLOGÍAS DE IMPLEMENTACIÓN}
 
-\subsection{Importancia para la Presente Investigación}
+En esta sección se describen las tecnologías seleccionadas para la implementación de la librería propuesta.
 
-La presente investigación se centra en el desarrollo de una librería basada en el patrón Transactional Outbox para aplicaciones Spring Boot. Sin embargo, resulta necesario comprender los mecanismos alternativos utilizados para la publicación de eventos.
+\subsection{Java}
 
-CDC representa una de las principales alternativas modernas para la propagación de eventos y constituye una referencia importante para comparar estrategias de publicación, rendimiento, complejidad de implementación y escalabilidad.
+Java es un lenguaje de programación orientado a objetos, fuertemente tipado y de propósito general, desarrollado originalmente por Sun Microsystems en 1995 y actualmente mantenido por Oracle Corporation~\parencite{bloch2018}.
 
-Su estudio permite contextualizar adecuadamente el alcance de la solución propuesta y establecer diferencias entre enfoques basados en polling y enfoques basados en captura de cambios.
+Entre las características relevantes de Java para la presente investigación se encuentran:
+
+\begin{itemize}
+    \item Independencia de plataforma mediante la Java Virtual Machine (JVM).
+    \item Gestión automática de memoria (Garbage Collection).
+    \item Ecosistema maduro de librerías y frameworks.
+    \item Soporte robusto para concurrencia y programación multihilo.
+    \item Amplia adopción en el desarrollo de aplicaciones empresariales y microservicios.
+\end{itemize}
+
+\subsection{Spring Boot}
+
+Spring Boot es un framework de desarrollo de aplicaciones Java que simplifica la configuración y el despliegue de aplicaciones basadas en el ecosistema Spring~\parencite{walls2019}. Proporciona configuración automática, servidores embebidos y convenciones que reducen significativamente el código necesario para crear aplicaciones productivas.
+
+Las características relevantes de Spring Boot para esta investigación incluyen:
+
+\begin{itemize}
+    \item \textbf{Auto-configuración}: detecta las dependencias del proyecto y configura automáticamente los componentes necesarios.
+    \item \textbf{Spring Data JPA}: facilita el acceso a bases de datos relacionales mediante repositorios declarativos.
+    \item \textbf{Spring Scheduling}: permite la ejecución de tareas programadas (utilizado para el polling de la tabla Outbox).
+    \item \textbf{Spring Kafka}: proporciona integración nativa con Apache Kafka para la producción y consumo de eventos.
+    \item \textbf{Gestión transaccional}: mediante la anotación \texttt{@Transactional}, permite demarcar transacciones de forma declarativa.
+    \item \textbf{Starters}: módulos preconfigurados que simplifican la incorporación de funcionalidades.
+\end{itemize}
+
+\subsection{PostgreSQL}
+
+PostgreSQL es un sistema gestor de bases de datos relacional de código abierto, reconocido por su robustez, extensibilidad y cumplimiento de estándares SQL~\parencite{kleppmann2017}. Soporta tipos de datos avanzados como JSONB (utilizado para almacenar el payload de los eventos en la tabla Outbox) y ofrece un log transaccional (Write-Ahead Log) compatible con herramientas de CDC.
+
+\subsection{Apache Kafka}
+
+Apache Kafka es la plataforma de streaming de eventos seleccionada como broker principal para la librería~\parencite{narkhede2017}. Sus características de persistencia, replicación y procesamiento distribuido lo convierten en la opción más adoptada para arquitecturas de microservicios de gran escala.
+
+\subsection{Docker y Testcontainers}
+
+Docker permite la creación de contenedores que encapsulan aplicaciones y sus dependencias en entornos aislados y reproducibles. Testcontainers es una librería Java que permite ejecutar contenedores Docker durante las pruebas de integración, proporcionando instancias reales de bases de datos y brokers para validar el comportamiento de la librería en condiciones cercanas a producción.
+
+\subsection{Resumen de Tecnologías}
+
+La Tabla~\ref{tab:tecnologias} resume las tecnologías utilizadas en la implementación de la librería.
+
+\begin{table}[H]
+    \centering
+    \caption{Tecnologías utilizadas en la implementación de la librería.}
+    \begin{tabular}{|l|l|p{6cm}|}
+        \hline
+        \textbf{Tecnología} & \textbf{Versión} & \textbf{Propósito} \\
+        \hline
+        Java & 17+ & Lenguaje de implementación. \\
+        \hline
+        Spring Boot & 3.x & Framework de desarrollo. \\
+        \hline
+        PostgreSQL & 15+ & Base de datos relacional (tabla Outbox). \\
+        \hline
+        Apache Kafka & 3.x & Broker de eventos. \\
+        \hline
+        Docker & -- & Contenedorización de servicios. \\
+        \hline
+        Testcontainers & 1.x & Pruebas de integración con contenedores. \\
+        \hline
+        Gradle & -- & Gestión de dependencias y construcción. \\
+        \hline
+    \end{tabular}
+    \label{tab:tecnologias}
+\end{table}
+
