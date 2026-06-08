@@ -1,0 +1,27 @@
+\clearpage
+\chapter*{\centering \normalsize RESUMEN}
+
+Las arquitecturas de microservicios permiten construir sistemas distribuidos más flexibles, escalables y desacoplados. Sin embargo, cuando un servicio debe guardar información en su base de datos y publicar un evento en un broker de mensajería, aparece el problema de la doble escritura (\textit{Dual Write Problem}), debido a que ambas operaciones no forman parte de una misma transacción atómica. Esta situación puede provocar pérdida de eventos, duplicación de mensajes e inconsistencias entre servicios.
+
+La presente tesis desarrolla una librería en Java basada en el patrón \textit{Transactional Outbox} para garantizar la entrega confiable de eventos en microservicios orientados a eventos. La solución se integra con Spring Boot y utiliza PostgreSQL para almacenar los eventos pendientes dentro de la misma transacción de negocio, mientras que un publicador asíncrono se encarga de enviarlos posteriormente a Apache Kafka.
+
+La librería incorpora mecanismos de reintento con \textit{backoff} exponencial, limpieza automática de eventos procesados e idempotencia en consumidores para evitar el procesamiento duplicado. La validación se realizó mediante pruebas de integración, pruebas de estrés y escenarios de fallas controladas usando Docker y Testcontainers.
+
+Los resultados obtenidos demostraron una tasa de entrega del 100\% sobre 43.100 eventos procesados, sin pérdida de eventos y con descarte correcto de duplicados. Estos resultados superan el umbral del 99\% planteado en la hipótesis, confirmando que el patrón \textit{Transactional Outbox} constituye una alternativa efectiva para mejorar la confiabilidad en la comunicación asíncrona entre microservicios.
+
+\textbf{Palabras clave:} Microservicios, Transactional Outbox, entrega confiable de eventos, idempotencia, Apache Kafka.\\
+\textbf{Metodología:} Investigación aplicada, cuantitativa, descriptiva y experimental.
+
+\clearpage
+\chapter*{\centering \normalsize ABSTRACT}
+
+Microservice architectures make it possible to build more flexible, scalable, and decoupled distributed systems. However, when a service must store information in its database and publish an event to a message broker, the \textit{Dual Write Problem} appears, because both operations are not part of the same atomic transaction. This situation may cause event loss, message duplication, and inconsistencies between services.
+
+This thesis develops a Java library based on the \textit{Transactional Outbox} pattern to guarantee reliable event delivery in event-driven microservices. The solution integrates with Spring Boot and uses PostgreSQL to store pending events within the same business transaction, while an asynchronous publisher later sends them to Apache Kafka.
+
+The library includes exponential backoff retries, automatic cleanup of processed events, and idempotency mechanisms for consumers to avoid duplicate processing. The validation was carried out through integration tests, stress tests, and controlled failure scenarios using Docker and Testcontainers.
+
+The obtained results showed a 100\% delivery rate over 43,100 processed events, with no event loss and correct duplicate discarding. These results exceed the 99\% threshold defined in the hypothesis, confirming that the \textit{Transactional Outbox} pattern is an effective alternative to improve reliability in asynchronous communication between microservices.
+
+\textbf{Keywords:} Microservices, Transactional Outbox, reliable event delivery, idempotency, Apache Kafka.\\
+\textbf{Methodology:} Applied, quantitative, descriptive, and experimental research.
