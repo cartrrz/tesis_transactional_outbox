@@ -1,0 +1,25 @@
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        node distance=1.1cm and 1.45cm,
+        every node/.style={font=\small},
+        state/.style={tesisBox, minimum width=2.8cm, minimum height=0.95cm},
+        action/.style={tesisProcess, minimum width=3.2cm, minimum height=0.95cm}
+    ]
+        \node[state, fill=tesisSoftBlue] (pending) {\textbf{PENDING}\\Evento pendiente};
+        \node[action, right=of pending] (publishing) {Polling Publisher\\publica en Kafka};
+        \node[state, fill=tesisSoftGreen, right=of publishing] (sent) {\textbf{SENT}\\Evento entregado};
+
+        \node[state, fill=tesisSoftAmber, below=of publishing] (retry) {Falla temporal\\incrementar reintentos};
+        \node[state, fill=tesisSoftRed, below=of sent] (failed) {\textbf{FAILED}\\Reintentos agotados};
+
+        \draw[tesisArrow] (pending) -- node[above, font=\scriptsize] {selección} (publishing);
+        \draw[tesisArrow] (publishing) -- node[above, font=\scriptsize] {confirmación} (sent);
+        \draw[tesisArrow] (publishing) -- node[right, font=\scriptsize] {error} (retry);
+        \draw[tesisDashedArrow] (retry.west) to[bend left=18] node[left, font=\scriptsize] {reintento} (pending.south);
+        \draw[tesisArrow] (retry) -- (failed);
+    \end{tikzpicture}
+
+    \caption{Ciclo de vida de un evento dentro de la tabla Outbox.}
+    \label{fig:ciclo_vida_evento}
+\end{figure}

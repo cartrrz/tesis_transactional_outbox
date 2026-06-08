@@ -1,0 +1,35 @@
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        x=1cm,
+        y=1cm,
+        every node/.style={font=\scriptsize},
+        participant/.style={tesisBox, minimum width=2.15cm, minimum height=0.75cm},
+        lifeline/.style={draw=tesisSlate!35, dashed, line width=0.5pt},
+        message/.style={tesisArrow, line width=0.8pt},
+        messageLabel/.style={font=\scriptsize, fill=white, inner sep=1pt}
+    ]
+        \node[participant, fill=tesisSoftBlue] (producer) at (0,0) {Servicio\\productor};
+        \node[participant, fill=tesisSoftGreen] (db) at (2.8,0) {BD / Tabla\\Outbox};
+        \node[participant, fill=tesisSoftAmber] (publisher) at (5.6,0) {Polling\\Publisher};
+        \node[participant, fill=tesisSoftBlue] (kafka) at (8.4,0) {Apache\\Kafka};
+        \node[participant, fill=tesisSoftGreen] (consumer) at (11.2,0) {Consumidor\\idempotente};
+
+        \foreach \x in {0,2.8,5.6,8.4,11.2} {
+            \draw[lifeline] (\x,-0.55) -- (\x,-7.05);
+        }
+
+        \draw[message] (0,-1.20) -- node[above, messageLabel] {1. guardar evento} (2.8,-1.20);
+        \draw[message] (2.8,-1.85) -- node[above, messageLabel] {2. commit} (0,-1.85);
+        \draw[message] (5.6,-2.65) -- node[above, messageLabel] {3. leer PENDING} (2.8,-2.65);
+        \draw[message] (2.8,-3.30) -- node[above, messageLabel] {4. eventos} (5.6,-3.30);
+        \draw[message] (5.6,-4.10) -- node[above, messageLabel] {5. publicar} (8.4,-4.10);
+        \draw[message] (8.4,-4.75) -- node[above, messageLabel] {6. entregar} (11.2,-4.75);
+        \draw[message] (11.2,-5.45) -- node[above, messageLabel] {7. verificar duplicado} (2.8,-5.45);
+        \draw[message] (11.2,-6.10) -- node[left, messageLabel] {8. procesar una vez} (11.2,-6.60);
+        \draw[message] (5.6,-6.90) -- node[above, messageLabel] {9. marcar SENT} (2.8,-6.90);
+    \end{tikzpicture}
+
+    \caption{Secuencia de publicación confiable e idempotencia en el uso de la librería.}
+    \label{fig:secuencia_outbox_idempotencia}
+\end{figure}
