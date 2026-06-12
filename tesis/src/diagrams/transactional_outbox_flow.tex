@@ -1,29 +1,30 @@
 \begin{figure}[H]
     \centering
     \begin{tikzpicture}[
-        font=\small,
-        phase/.style={draw, rounded corners, minimum width=6cm, minimum height=0.8cm, align=center, fill=gray!10},
-        arrow/.style={-Latex, thick},
-        scale=0.9, every node/.append style={scale=0.9}
+        node distance=0.8cm,
+        every node/.style={font=\small},
+        phase/.style={tesisBox, fill=tesisSoftBlue, minimum width=6.3cm, minimum height=0.78cm},
+        asyncphase/.style={tesisBox, fill=tesisSoftAmber, minimum width=6.3cm, minimum height=0.78cm}
     ]
-        \node[phase] (a) at (0,0) {1. Solicitud de negocio recibida};
-        \node[phase] (b) at (0,-1.1) {2. Persistir datos de negocio en la BD};
-        \node[phase] (c) at (0,-2.2) {3. Insertar evento en tabla Outbox};
-        \node[phase] (d) at (0,-3.3) {4. Confirmar transacción (COMMIT)};
+        \node[phase] (a) {1. Solicitud de negocio recibida};
+        \node[phase, below=of a] (b) {2. Persistir datos de negocio en la BD};
+        \node[phase, below=of b] (c) {3. Insertar evento en tabla Outbox};
+        \node[phase, below=of c] (d) {4. Confirmar transacción (COMMIT)};
 
-        \node[font=\footnotesize\bfseries] at (0,-4.2) {--- Proceso asíncrono ---};
+        \node[font=\footnotesize\bfseries, below=0.65cm of d] (sep) {Proceso asíncrono};
 
-        \node[phase] (e) at (0,-5.1) {5. Consultar eventos pendientes (polling)};
-        \node[phase] (f) at (0,-6.2) {6. Publicar evento en Apache Kafka};
-        \node[phase] (g) at (0,-7.3) {7. Marcar evento como procesado};
+        \node[asyncphase, below=0.65cm of sep] (e) {5. Consultar eventos pendientes (polling)};
+        \node[asyncphase, below=of e] (f) {6. Publicar evento en Apache Kafka};
+        \node[asyncphase, below=of f] (g) {7. Marcar evento como procesado};
 
-        \draw[arrow] (a) -- (b);
-        \draw[arrow] (b) -- (c);
-        \draw[arrow] (c) -- (d);
-        \draw[arrow] (d) -- (e);
-        \draw[arrow] (e) -- (f);
-        \draw[arrow] (f) -- (g);
+        \draw[tesisArrow] (a) -- (b);
+        \draw[tesisArrow] (b) -- (c);
+        \draw[tesisArrow] (c) -- (d);
+        \draw[tesisDashedArrow] (d) -- (e);
+        \draw[tesisArrow] (e) -- (f);
+        \draw[tesisArrow] (f) -- (g);
     \end{tikzpicture}
+
     \caption{Flujo operativo completo del patrón Transactional Outbox.}
     \label{fig:outbox_flow}
 \end{figure}

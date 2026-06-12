@@ -191,7 +191,9 @@ public class OutboxEventService {
 
 \section{IMPLEMENTACIÓN DEL MÓDULO PUBLICADOR}
 
-% TODO: Agregar imagen - Diagrama de flujo del ciclo de vida de un evento: PENDING -> (publicación) -> SENT o PENDING -> (falla) -> reintento -> SENT/FAILED. Puede ser un diagrama de estados mostrando las transiciones.
+La Figura~\ref{fig:ciclo_vida_evento} resume el ciclo de vida de un evento desde su registro inicial hasta su publicación exitosa o su marcado como fallido.
+
+\input{diagrams/ciclo_vida_evento}
 
 El módulo publicador implementa la estrategia de \textit{Polling Publisher}: un proceso programado que consulta periódicamente la tabla Outbox, publica los eventos pendientes en Kafka y los marca como procesados.
 
@@ -273,20 +275,17 @@ La Tabla~\ref{tab:retry_backoff} ilustra la progresión del backoff exponencial.
 \begin{table}[H]
     \centering
     \caption{Progresión del backoff exponencial en reintentos.}
-    \begin{tabular}{|c|c|c|}
-        \hline
-        \textbf{Reintento} & \textbf{Demora (s)} & \textbf{Tiempo acumulado} \\
-        \hline
+    \small
+    \begin{tabular}{@{} c c c @{}}
+        \toprule
+        \tableHeader{Reintento} & \tableHeader{Demora (s)} & \tableHeader{Tiempo acumulado} \\
+        \midrule
         1 & 2 & 2s \\
-        \hline
         2 & 4 & 6s \\
-        \hline
         3 & 8 & 14s \\
-        \hline
         4 & 16 & 30s \\
-        \hline
         5 & 32 & 62s \\
-        \hline
+        \bottomrule
     \end{tabular}
     \label{tab:retry_backoff}
 \end{table}
@@ -490,7 +489,9 @@ spring:
 
 \section{EJEMPLO DE USO}
 
-% TODO: Agregar imagen - Diagrama de secuencia mostrando la interacción entre el Servicio Productor, la Base de Datos (tabla Outbox), el Polling Publisher, Kafka y el Servicio Consumidor (con idempotencia).
+La Figura~\ref{fig:secuencia_outbox_idempotencia} muestra la secuencia general de interacción entre el servicio productor, la tabla Outbox, el publicador, Kafka y el consumidor idempotente.
+
+\input{diagrams/secuencia_outbox_idempotencia}
 
 A continuación se muestra un ejemplo completo de cómo un servicio de pedidos utiliza la librería para publicar eventos de forma confiable.
 
@@ -564,27 +565,21 @@ La Tabla~\ref{tab:estructura_proyecto} presenta la estructura de paquetes de la 
 \begin{table}[H]
     \centering
     \caption{Estructura de paquetes de la librería.}
-    \begin{tabular}{|l|p{7cm}|}
-        \hline
-        \textbf{Paquete} & \textbf{Responsabilidad} \\
-        \hline
+    \small
+    \begin{tabularx}{0.92\textwidth}{@{} l Y @{}}
+        \toprule
+        \tableHeader{Paquete} & \tableHeader{Responsabilidad} \\
+        \midrule
         \texttt{entity} & Entidades JPA (OutboxEvent, ProcessedEvent). \\
-        \hline
         \texttt{repository} & Repositorios Spring Data JPA. \\
-        \hline
         \texttt{service} & Servicios de negocio (registro, idempotencia). \\
-        \hline
         \texttt{publisher} & Polling Publisher y lógica de reintentos. \\
-        \hline
         \texttt{cleanup} & Scheduler de limpieza automática. \\
-        \hline
         \texttt{config} & Auto-configuración y propiedades. \\
-        \hline
         \texttt{annotation} & Anotaciones personalizadas. \\
-        \hline
         \texttt{aspect} & Aspectos AOP para idempotencia. \\
-        \hline
-    \end{tabular}
+        \bottomrule
+    \end{tabularx}
     \label{tab:estructura_proyecto}
 \end{table}
 
@@ -604,4 +599,3 @@ dependencies {
     testImplementation 'org.testcontainers:kafka'
 }
 \end{lstlisting}
-

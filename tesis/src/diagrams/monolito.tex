@@ -1,21 +1,29 @@
 \begin{figure}[H]
     \centering
     \begin{tikzpicture}[
-        font=\small,
-        module/.style={draw, rounded corners, minimum width=2.5cm, minimum height=1cm, align=center, fill=gray!10},
-        database/.style={draw, cylinder, shape border rotate=90, aspect=0.25, minimum width=5cm, minimum height=1.2cm, align=center, fill=gray!20},
-        app/.style={draw, rounded corners, minimum width=10cm, minimum height=4cm, fill=gray!3}
+        node distance=0.85cm and 1.2cm,
+        every node/.style={font=\small}
     ]
-        \node[app] (mono) {};
-        \node at (0,1.2) {\textbf{Aplicación Monolítica}};
+        \node[
+            tesisContainer,
+            minimum width=10.0cm,
+            minimum height=5.25cm,
+            label={[font=\bfseries\small]above:Aplicación monolítica}
+        ] (mono) at (0,0) {};
 
-        \node[module] at (-3,0) {Módulo\\Pedidos};
-        \node[module] at (0,0) {Módulo\\Pagos};
-        \node[module] at (3,0) {Módulo\\Inventario};
+        \node[tesisBox, fill=tesisSoftBlue, minimum width=2.35cm] (orders) at (-3.05,1.02) {Módulo\\Pedidos};
+        \node[tesisBox, fill=tesisSoftBlue, minimum width=2.35cm] (payments) at (0,1.02) {Módulo\\Pagos};
+        \node[tesisBox, fill=tesisSoftBlue, minimum width=2.35cm] (inventory) at (3.05,1.02) {Módulo\\Inventario};
 
-        \node[database] at (0,-2.5) {Base de Datos Compartida};
+        \node[tesisProcess, minimum width=5.7cm, minimum height=0.72cm] (data) at (0,-0.35) {Capa común de acceso a datos};
+        \node[tesisDatabase, minimum width=5.2cm, minimum height=0.9cm] (db) at (0,-2.15) {Base de datos compartida};
+
+        \draw[tesisArrow] (orders.south) -- (data.north -| orders.south);
+        \draw[tesisArrow] (payments.south) -- (data.north);
+        \draw[tesisArrow] (inventory.south) -- (data.north -| inventory.south);
+        \draw[tesisArrow] (data.south) -- (db.north);
     \end{tikzpicture}
+
     \caption{Arquitectura monolítica tradicional.}
     \label{fig:monolito}
 \end{figure}
-

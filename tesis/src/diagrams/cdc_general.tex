@@ -1,52 +1,19 @@
 \begin{figure}[H]
     \centering
-
     \begin{tikzpicture}[
-        font=\small,
-        service/.style={
-            draw,
-            rounded corners,
-            minimum width=3.5cm,
-            minimum height=0.9cm,
-            align=center,
-            fill=gray!10
-        },
-        database/.style={
-            draw,
-            cylinder,
-            shape border rotate=90,
-            aspect=0.25,
-            minimum width=3.5cm,
-            minimum height=1cm,
-            align=center,
-            fill=gray!20
-        },
-        brokerbox/.style={
-            draw,
-            rounded corners,
-            minimum width=4cm,
-            minimum height=1cm,
-            align=center,
-            fill=gray!15
-        },
-        arrow/.style={
-            -Latex,
-            thick
-        }
+        node distance=1.05cm,
+        every node/.style={font=\small}
     ]
+        \node[tesisService, minimum width=3.8cm] (app) {Aplicación Spring Boot};
+        \node[tesisDatabase, below=of app, minimum width=3.4cm] (db) {Base de datos};
+        \node[tesisProcess, below=of db, minimum width=3.8cm] (cdc) {Motor CDC\\Debezium};
+        \node[tesisBroker, below=of cdc, minimum width=4.0cm] (broker) {Broker de eventos\\Kafka};
 
-\node[service] (app) at (0,2.4) {Aplicación Spring Boot};
-\node[database] (db) at (0,0.8) {Base de Datos};
-\node[service] (cdc) at (0,-0.8) {Motor CDC (Debezium)};
-\node[brokerbox] (broker) at (0,-2.4) {Broker de Eventos (Kafka)};
-
-\draw[arrow] (app) -- (db);
-\draw[arrow] (db) -- node[right]{\scriptsize Transaction Log} (cdc);
-\draw[arrow] (cdc) -- node[right]{\scriptsize Evento} (broker);
-
+        \draw[tesisArrow] (app) -- node[right, font=\scriptsize] {escritura} (db);
+        \draw[tesisArrow] (db) -- node[right, font=\scriptsize] {transaction log} (cdc);
+        \draw[tesisArrow] (cdc) -- node[right, font=\scriptsize] {eventos} (broker);
     \end{tikzpicture}
 
     \caption{Arquitectura general de Change Data Capture.}
     \label{fig:cdc_general}
-
 \end{figure}

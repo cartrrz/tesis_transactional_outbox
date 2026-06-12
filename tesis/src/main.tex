@@ -32,6 +32,75 @@
 \pgfplotsset{compat=1.18}
 \usepgfplotslibrary{groupplots}
 
+\definecolor{tesisBlue}{HTML}{1F4E79}
+\definecolor{tesisGreen}{HTML}{2E7D5B}
+\definecolor{tesisAmber}{HTML}{D99000}
+\definecolor{tesisRed}{HTML}{B23B3B}
+\definecolor{tesisSlate}{HTML}{34495E}
+\definecolor{tesisSoftBlue}{HTML}{EAF2F8}
+\definecolor{tesisSoftGreen}{HTML}{EAF6EF}
+\definecolor{tesisSoftAmber}{HTML}{FFF4D6}
+\definecolor{tesisSoftRed}{HTML}{FDECEC}
+\definecolor{tesisSoftGray}{HTML}{F7F9FB}
+
+\tikzset{
+    tesisBox/.style={
+        draw=tesisSlate,
+        line width=0.45pt,
+        rounded corners=3pt,
+        align=center,
+        inner sep=5pt,
+        font=\small,
+        fill=tesisSoftGray
+    },
+    tesisClient/.style={tesisBox, fill=tesisSoftGray, minimum width=2.8cm, minimum height=0.9cm},
+    tesisService/.style={tesisBox, fill=tesisSoftBlue, minimum width=2.8cm, minimum height=0.95cm},
+    tesisBroker/.style={tesisBox, fill=tesisSoftAmber, minimum width=3.2cm, minimum height=0.95cm},
+    tesisProcess/.style={tesisBox, fill=tesisSoftGreen, minimum width=3.0cm, minimum height=0.9cm},
+    tesisWarning/.style={tesisBox, fill=tesisSoftRed, minimum width=3.0cm, minimum height=0.9cm},
+    tesisDatabase/.style={
+        draw=tesisSlate,
+        line width=0.45pt,
+        cylinder,
+        shape border rotate=90,
+        aspect=0.25,
+        align=center,
+        inner sep=4pt,
+        font=\small,
+        fill=tesisSoftGreen,
+        minimum width=2.5cm,
+        minimum height=1.0cm
+    },
+    tesisContainer/.style={
+        draw=tesisSlate!70,
+        line width=0.45pt,
+        rounded corners=5pt,
+        fill=tesisSoftGray,
+        inner sep=0.35cm
+    },
+    tesisArrow/.style={-Latex, line width=0.65pt, draw=tesisSlate},
+    tesisDashedArrow/.style={-Latex, line width=0.65pt, dashed, draw=tesisSlate}
+}
+
+\pgfplotsset{
+    tesisAxis/.style={
+        axis line style={tesisSlate},
+        tick style={tesisSlate},
+        label style={font=\small},
+        tick label style={font=\footnotesize},
+        legend style={draw=none, fill=white, font=\footnotesize},
+        grid=major,
+        grid style={tesisSlate!15},
+        major grid style={tesisSlate!15},
+        mark size=2.7pt
+    }
+}
+
+\newcommand{\tableHeader}[1]{\textbf{#1}}
+\newcolumntype{Y}{>{\RaggedRight\arraybackslash}X}
+\setlength{\tabcolsep}{6pt}
+\renewcommand{\arraystretch}{1.15}
+
 \captionsetup{belowskip=0pt}
 % \onehalfspacing
 

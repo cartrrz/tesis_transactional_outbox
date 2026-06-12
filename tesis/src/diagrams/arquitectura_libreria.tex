@@ -1,31 +1,29 @@
 \begin{figure}[H]
     \centering
     \begin{tikzpicture}[
-        font=\small,
-        app/.style={draw, rounded corners, minimum width=3.5cm, minimum height=0.9cm, align=center, fill=gray!5},
-        lib/.style={draw, rounded corners, minimum width=4cm, minimum height=0.9cm, align=center, fill=gray!15},
-        module/.style={draw, rounded corners, minimum width=2.8cm, minimum height=0.8cm, align=center, fill=gray!10},
-        infra/.style={draw, rounded corners, minimum width=3cm, minimum height=0.9cm, align=center, fill=gray!20},
-        arrow/.style={-Latex, thick}
+        node distance=1.15cm and 1.25cm,
+        every node/.style={font=\small}
     ]
-        \node[app] (app) at (0,4) {Aplicación Spring Boot};
-        \node[lib] (lib) at (0,2.5) {Librería Transactional Outbox};
+        \node[tesisService, minimum width=4.0cm] (app) {Aplicación Spring Boot};
+        \node[tesisProcess, below=of app, minimum width=4.7cm] (lib) {Librería Transactional Outbox};
 
-        \node[module] (persist) at (-3.5,0.8) {Módulo\\Persistencia};
-        \node[module] (publisher) at (0,0.8) {Módulo\\Publicador};
-        \node[module] (idempotent) at (3.5,0.8) {Módulo\\Idempotencia};
+        \node[tesisBox, fill=tesisSoftBlue, below left=1.25cm and 2.05cm of lib, minimum width=2.6cm] (persist) {Módulo\\Persistencia};
+        \node[tesisBox, fill=tesisSoftAmber, below=1.25cm of lib, minimum width=2.6cm] (publisher) {Módulo\\Publicador};
+        \node[tesisBox, fill=tesisSoftGreen, below right=1.25cm and 2.05cm of lib, minimum width=2.6cm] (idempotent) {Módulo\\Idempotencia};
 
-        \node[infra] (db) at (-3.5,-1) {PostgreSQL};
-        \node[infra] (kafka) at (3.5,-1) {Apache Kafka};
+        \node[tesisDatabase, below=of persist, minimum width=2.6cm] (db) {PostgreSQL};
+        \node[tesisBroker, below=of publisher, minimum width=2.6cm] (kafka) {Apache Kafka};
+        \node[tesisDatabase, below=of idempotent, minimum width=2.6cm] (processed) {Eventos\\procesados};
 
-        \draw[arrow] (app) -- (lib);
-        \draw[arrow] (lib) -- (persist);
-        \draw[arrow] (lib) -- (publisher);
-        \draw[arrow] (lib) -- (idempotent);
-        \draw[arrow] (persist) -- (db);
-        \draw[arrow] (publisher) -- (kafka);
-        \draw[arrow, dashed] (idempotent) -- (db);
+        \draw[tesisArrow] (app) -- (lib);
+        \draw[tesisArrow] (lib) -- (persist);
+        \draw[tesisArrow] (lib) -- (publisher);
+        \draw[tesisArrow] (lib) -- (idempotent);
+        \draw[tesisArrow] (persist) -- (db);
+        \draw[tesisArrow] (publisher) -- (kafka);
+        \draw[tesisDashedArrow] (idempotent) -- (processed);
     \end{tikzpicture}
+
     \caption{Arquitectura modular de la librería propuesta.}
     \label{fig:arquitectura-libreria}
 \end{figure}

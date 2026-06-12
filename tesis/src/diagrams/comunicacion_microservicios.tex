@@ -1,71 +1,45 @@
 \begin{figure}[H]
     \centering
-
     \begin{tikzpicture}[
-        font=\small,
-        service/.style={
-            draw,
-            rounded corners,
-            minimum width=3.2cm,
-            minimum height=1cm,
-            align=center,
-            fill=gray!10
-        },
-        broker/.style={
-            draw,
-            rounded corners,
-            minimum width=3.4cm,
-            minimum height=1cm,
-            align=center,
-            fill=gray!20
-        },
-        group/.style={
-            draw,
-            rounded corners,
-            inner sep=0.45cm
-        },
-        arrow/.style={
-            -Latex,
-            thick
-        }
+        node distance=1.0cm,
+        every node/.style={font=\small}
     ]
+        \node[
+            tesisContainer,
+            minimum width=4.25cm,
+            minimum height=5.0cm,
+            label={[font=\bfseries\small]above:Comunicación síncrona}
+        ] (syncBox) at (-3.2,0) {};
 
-% ===================== SINCRONA =====================
-        \node[service] (syncA) at (-4,1) {Microservicio A};
-        \node[service] (syncB) at (-4,-2) {Microservicio B};
+        \node[tesisService, minimum width=3.0cm] (syncA) at (-3.2,1.25) {Microservicio A};
+        \node[tesisService, minimum width=3.0cm] (syncB) at (-3.2,-1.45) {Microservicio B};
 
-        \draw[arrow]
-        ([xshift=-0.35cm]syncA.south) --
-        node[left, align=center] {Solicitud\\REST/gRPC}
-        ([xshift=-0.35cm]syncB.north);
+        \draw[tesisArrow] ([xshift=-0.38cm]syncA.south) --
+            node[left, align=center, font=\scriptsize] {solicitud\\REST/gRPC}
+            ([xshift=-0.38cm]syncB.north);
+        \draw[tesisArrow] ([xshift=0.38cm]syncB.north) --
+            node[right, font=\scriptsize] {respuesta}
+            ([xshift=0.38cm]syncA.south);
 
-        \draw[arrow]
-        ([xshift=0.35cm]syncB.north) --
-        node[right] {Respuesta}
-        ([xshift=0.35cm]syncA.south);
+        \node[
+            tesisContainer,
+            minimum width=4.25cm,
+            minimum height=5.0cm,
+            label={[font=\bfseries\small]above:Comunicación asíncrona}
+        ] (asyncBox) at (3.2,0) {};
 
-        \node[group, fit=(syncA)(syncB), label={[font=\bfseries]above:Comunicación Síncrona}] {};
+        \node[tesisService, minimum width=3.0cm] (asyncA) at (3.2,1.45) {Microservicio A};
+        \node[tesisBroker, minimum width=3.1cm] (broker) at (3.2,0) {Broker de eventos};
+        \node[tesisService, minimum width=3.0cm] (asyncB) at (3.2,-1.45) {Microservicio B};
 
-% ===================== ASINCRONA =====================
-        \node[service] (asyncA) at (4,1) {Microservicio A};
-        \node[broker] (broker) at (4,-0.6) {Broker de Eventos\\Kafka / RabbitMQ};
-        \node[service] (asyncB) at (4,-2.3) {Microservicio B};
-
-        \draw[arrow]
-        (asyncA) --
-        node[right] {Publica evento}
-        (broker);
-
-        \draw[arrow]
-        (broker) --
-        node[right] {Consume evento}
-        (asyncB);
-
-        \node[group, fit=(asyncA)(broker)(asyncB), label={[font=\bfseries]above:Comunicación Asíncrona}] {};
-
+        \draw[tesisArrow] (asyncA) --
+            node[right, font=\scriptsize] {publica}
+            (broker);
+        \draw[tesisArrow] (broker) --
+            node[right, font=\scriptsize] {consume}
+            (asyncB);
     \end{tikzpicture}
 
     \caption{Comparación entre comunicación síncrona y comunicación asíncrona en arquitecturas de microservicios.}
     \label{fig:comunicacion_microservicios}
-
 \end{figure}

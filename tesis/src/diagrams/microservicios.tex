@@ -1,31 +1,27 @@
 \begin{figure}[H]
     \centering
     \begin{tikzpicture}[
-        font=\small,
-        service/.style={draw, rounded corners, minimum width=2.6cm, minimum height=1cm, align=center, fill=gray!10},
-        database/.style={draw, cylinder, shape border rotate=90, aspect=0.25, minimum width=2.2cm, minimum height=1cm, align=center, fill=gray!20},
-        gateway/.style={draw, rounded corners, minimum width=3cm, minimum height=1cm, align=center, fill=gray!15},
-        arrow/.style={-Latex, thick}
+        node distance=1.25cm and 1.45cm,
+        every node/.style={font=\small}
     ]
-        \node[gateway] (api) at (0,2) {API Gateway};
+        \node[tesisBroker, minimum width=3.2cm] (api) {API Gateway};
 
-        \node[service] (pedidos) at (-3.8,0) {Servicio\\Pedidos};
-        \node[service] (pagos) at (0,0) {Servicio\\Pagos};
-        \node[service] (inventario) at (3.8,0) {Servicio\\Inventario};
+        \node[tesisService, below left=1.25cm and 2.4cm of api] (pedidos) {Servicio\\Pedidos};
+        \node[tesisService, below=1.25cm of api] (pagos) {Servicio\\Pagos};
+        \node[tesisService, below right=1.25cm and 2.4cm of api] (inventario) {Servicio\\Inventario};
 
-        \node[database] (db1) at (-3.8,-2) {DB Pedidos};
-        \node[database] (db2) at (0,-2) {DB Pagos};
-        \node[database] (db3) at (3.8,-2) {DB Inventario};
+        \node[tesisDatabase, below=of pedidos] (db1) {DB\\Pedidos};
+        \node[tesisDatabase, below=of pagos] (db2) {DB\\Pagos};
+        \node[tesisDatabase, below=of inventario] (db3) {DB\\Inventario};
 
-        \draw[arrow] (api) -- (pedidos);
-        \draw[arrow] (api) -- (pagos);
-        \draw[arrow] (api) -- (inventario);
-
-        \draw[arrow] (pedidos) -- (db1);
-        \draw[arrow] (pagos) -- (db2);
-        \draw[arrow] (inventario) -- (db3);
+        \draw[tesisArrow] (api) -- (pedidos);
+        \draw[tesisArrow] (api) -- (pagos);
+        \draw[tesisArrow] (api) -- (inventario);
+        \draw[tesisArrow] (pedidos) -- (db1);
+        \draw[tesisArrow] (pagos) -- (db2);
+        \draw[tesisArrow] (inventario) -- (db3);
     \end{tikzpicture}
+
     \caption{Arquitectura basada en microservicios con bases de datos independientes.}
     \label{fig:microservicios}
 \end{figure}
-

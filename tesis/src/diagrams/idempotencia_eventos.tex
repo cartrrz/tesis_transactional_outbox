@@ -1,56 +1,24 @@
 \begin{figure}[H]
     \centering
-
     \begin{tikzpicture}[
-        font=\small,
-        box/.style={
-            draw,
-            rounded corners,
-            minimum width=3cm,
-            minimum height=0.9cm,
-            align=center,
-            fill=gray!10
-        },
-        store/.style={
-            draw,
-            cylinder,
-            shape border rotate=90,
-            aspect=0.25,
-            minimum width=2.6cm,
-            minimum height=1cm,
-            align=center,
-            fill=gray!20
-        },
-        arrow/.style={
-            -Latex,
-            thick
-        },
-        dashedarrow/.style={
-            -Latex,
-            thick,
-            dashed
-        }
+        node distance=1.0cm and 1.25cm,
+        every node/.style={font=\small}
     ]
+        \node[tesisBroker, minimum width=3.3cm] (broker) at (0,1.8) {Broker de eventos};
+        \node[tesisService, minimum width=3.6cm] (consumer) at (0,0.45) {Consumidor idempotente};
+        \node[tesisProcess, minimum width=3.5cm] (check) at (0,-0.95) {Verificar ID del evento};
 
-\node[box] (broker) at (0,3) {Broker de Eventos};
+        \node[tesisDatabase, minimum width=2.9cm] (processed) at (-4.0,-0.95) {Eventos\\procesados};
+        \node[tesisProcess, minimum width=3.1cm] (business) at (4.0,-0.95) {Lógica de\\negocio};
+        \node[tesisWarning, minimum width=3.1cm] (discard) at (0,-2.45) {Duplicado:\\descartar};
 
-\node[box] (consumer) at (0,1) {Consumidor Idempotente};
-
-\node[store] (processed) at (-3.5,-1.8) {Eventos\\Procesados};
-
-\node[box] (business) at (3.5,-1.8) {Lógica de\\Negocio};
-
-\draw[arrow] (broker) -- node[right]{\scriptsize Evento} (consumer);
-
-\draw[arrow] (consumer) -- node[above left]{\scriptsize 1. Verificar ID} (processed);
-
-\draw[arrow] (consumer) -- node[above right]{\scriptsize 2. Procesar} (business);
-
-\draw[dashedarrow] (processed.south) -- ++(0,-0.6) -| node[pos=0.25, below]{\scriptsize Si ya existe: descartar} (consumer.south);
-
+        \draw[tesisArrow] (broker) -- (consumer);
+        \draw[tesisArrow] (consumer) -- (check);
+        \draw[tesisArrow] (check) -- (processed);
+        \draw[tesisArrow] (check) -- (business);
+        \draw[tesisDashedArrow] (processed.south east) -- (discard.west);
     \end{tikzpicture}
 
     \caption{Control de eventos duplicados mediante consumidor idempotente.}
     \label{fig:idempotencia_eventos}
-
 \end{figure}

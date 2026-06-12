@@ -1,46 +1,21 @@
 \begin{figure}[H]
     \centering
-
     \begin{tikzpicture}[
-        font=\small,
-        box/.style={
-            draw,
-            rounded corners,
-            minimum width=2.4cm,
-            minimum height=0.9cm,
-            align=center,
-            fill=gray!10
-        },
-        database/.style={
-            draw,
-            cylinder,
-            shape border rotate=90,
-            aspect=0.25,
-            minimum width=2.4cm,
-            minimum height=1cm,
-            align=center,
-            fill=gray!20
-        },
-        arrow/.style={
-            -Latex,
-            thick
-        },
-        scale=0.85,
-        every node/.append style={scale=0.85}
+        node distance=1.3cm and 1.4cm,
+        every node/.style={font=\small},
+        scale=0.92,
+        every node/.append style={scale=0.92}
     ]
+        \node[tesisService] (service) {Microservicio};
+        \node[tesisDatabase, right=of service] (database) {PostgreSQL};
+        \node[tesisProcess, right=of database] (debezium) {Debezium\\Connector};
+        \node[tesisBroker, right=of debezium] (kafka) {Apache Kafka};
 
-\node[box] (service) at (0,0) {Microservicio};
-\node[database] (database) at (3.5,0) {PostgreSQL};
-\node[box] (debezium) at (7,0) {Debezium\\Connector};
-\node[box] (kafka) at (10.5,0) {Apache Kafka};
-
-\draw[arrow] (service) -- (database);
-\draw[arrow] (database) -- node[above]{\scriptsize WAL} (debezium);
-\draw[arrow] (debezium) -- node[above]{\scriptsize Eventos} (kafka);
-
+        \draw[tesisArrow] (service) -- node[above, font=\scriptsize] {escribe} (database);
+        \draw[tesisArrow] (database) -- node[above, font=\scriptsize] {WAL} (debezium);
+        \draw[tesisArrow] (debezium) -- node[above, font=\scriptsize] {eventos} (kafka);
     \end{tikzpicture}
 
     \caption{Funcionamiento de Debezium utilizando el log transaccional de PostgreSQL.}
     \label{fig:debezium_architecture}
-
 \end{figure}

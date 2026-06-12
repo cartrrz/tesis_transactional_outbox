@@ -1,39 +1,33 @@
 \begin{figure}[H]
     \centering
     \begin{tikzpicture}[
-        font=\small,
-        client/.style={draw, rounded corners, minimum width=2.8cm, minimum height=1cm, align=center, fill=gray!5},
-        service/.style={draw, rounded corners, minimum width=2.6cm, minimum height=1cm, align=center, fill=gray!10},
-        database/.style={draw, cylinder, shape border rotate=90, aspect=0.25, minimum width=2cm, minimum height=1cm, align=center, fill=gray!20},
-        gateway/.style={draw, rounded corners, minimum width=3cm, minimum height=1cm, align=center, fill=gray!15},
-        arrow/.style={-Latex, thick},
-        network/.style={draw, dashed, rounded corners, inner sep=0.4cm}
+        node distance=1.15cm and 1.4cm,
+        every node/.style={font=\small}
     ]
-        \node[client] (cliente) at (0,4) {Cliente};
-        \node[gateway] (api) at (0,2.2) {API Gateway};
+        \node[tesisClient] (cliente) {Cliente};
+        \node[tesisBroker, below=of cliente, minimum width=3.2cm] (api) {API Gateway};
 
-        \node[service] (micro1) at (-3.8,0) {Servicio\\Pedidos};
-        \node[service] (micro2) at (0,0) {Servicio\\Pagos};
-        \node[service] (micro3) at (3.8,0) {Servicio\\Inventario};
+        \node[tesisService, below left=1.2cm and 2.4cm of api] (micro1) {Servicio\\Pedidos};
+        \node[tesisService, below=1.2cm of api] (micro2) {Servicio\\Pagos};
+        \node[tesisService, below right=1.2cm and 2.4cm of api] (micro3) {Servicio\\Inventario};
 
-        \node[database] (db1) at (-3.8,-2) {DB};
-        \node[database] (db2) at (0,-2) {DB};
-        \node[database] (db3) at (3.8,-2) {DB};
+        \node[tesisDatabase, below=of micro1] (db1) {DB};
+        \node[tesisDatabase, below=of micro2] (db2) {DB};
+        \node[tesisDatabase, below=of micro3] (db3) {DB};
 
-        \draw[arrow] (cliente) -- (api);
-        \draw[arrow] (api) -- (micro1);
-        \draw[arrow] (api) -- (micro2);
-        \draw[arrow] (api) -- (micro3);
-        \draw[arrow] (micro1) -- (db1);
-        \draw[arrow] (micro2) -- (db2);
-        \draw[arrow] (micro3) -- (db3);
+        \draw[tesisArrow] (cliente) -- (api);
+        \draw[tesisArrow] (api) -- (micro1);
+        \draw[tesisArrow] (api) -- (micro2);
+        \draw[tesisArrow] (api) -- (micro3);
+        \draw[tesisArrow] (micro1) -- (db1);
+        \draw[tesisArrow] (micro2) -- (db2);
+        \draw[tesisArrow] (micro3) -- (db3);
+        \draw[tesisDashedArrow] (micro1) -- node[above, font=\scriptsize] {evento} (micro2);
+        \draw[tesisDashedArrow] (micro2) -- node[above, font=\scriptsize] {evento} (micro3);
 
-        \draw[arrow, dashed] (micro1) -- node[above]{\scriptsize evento} (micro2);
-        \draw[arrow, dashed] (micro2) -- node[above]{\scriptsize evento} (micro3);
-
-        \node[network, fit=(micro1)(micro2)(micro3)(db1)(db2)(db3), label={[font=\footnotesize]below:Red distribuida}] {};
+        \node[draw=tesisSlate!55, dashed, rounded corners=5pt, inner sep=0.35cm, fit=(micro1)(micro2)(micro3)(db1)(db2)(db3), label={[font=\footnotesize]below:Red distribuida}] {};
     \end{tikzpicture}
+
     \caption{Ejemplo de sistema distribuido basado en microservicios.}
     \label{fig:sistema-distribuido}
 \end{figure}
-

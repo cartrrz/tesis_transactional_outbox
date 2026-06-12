@@ -1,49 +1,24 @@
 \begin{figure}[H]
     \centering
-
     \begin{tikzpicture}[
-        font=\small,
-        service/.style={
-            draw,
-            rounded corners,
-            minimum width=2.8cm,
-            minimum height=1cm,
-            align=center,
-            fill=gray!10
-        },
-        brokerbox/.style={
-            draw,
-            rounded corners,
-            minimum width=4cm,
-            minimum height=1.2cm,
-            align=center,
-            fill=gray!20
-        },
-        arrow/.style={
-            -Latex,
-            thick
-        }
+        node distance=1.5cm and 2.2cm,
+        every node/.style={font=\small}
     ]
+        \node[tesisService] (producer1) {Servicio\\Pedidos};
+        \node[tesisService, right=4.8cm of producer1] (producer2) {Servicio\\Usuarios};
+        \node[tesisBroker, below right=1.4cm and 0.8cm of producer1, minimum width=4.0cm] (broker) {Broker de eventos\\Kafka / RabbitMQ};
 
-\node[service] (producer1) at (-4,2) {Servicio\\Pedidos};
-\node[service] (producer2) at (4,2) {Servicio\\Usuarios};
+        \node[tesisService, below left=1.4cm and 2.2cm of broker] (consumer1) {Inventario};
+        \node[tesisService, below=1.4cm of broker] (consumer2) {Pagos};
+        \node[tesisService, below right=1.4cm and 2.2cm of broker] (consumer3) {Notificaciones};
 
-\node[brokerbox] (broker) at (0,0) {Broker de Eventos\\Kafka / RabbitMQ};
-
-\node[service] (consumer1) at (-4,-2) {Inventario};
-\node[service] (consumer2) at (0,-2) {Pagos};
-\node[service] (consumer3) at (4,-2) {Notificaciones};
-
-\draw[arrow] (producer1) -- (broker);
-\draw[arrow] (producer2) -- (broker);
-
-\draw[arrow] (broker) -- (consumer1);
-\draw[arrow] (broker) -- (consumer2);
-\draw[arrow] (broker) -- (consumer3);
-
+        \draw[tesisArrow] (producer1) -- node[above, font=\scriptsize] {publica} (broker);
+        \draw[tesisArrow] (producer2) -- node[above, font=\scriptsize] {publica} (broker);
+        \draw[tesisArrow] (broker) -- (consumer1);
+        \draw[tesisArrow] (broker) -- (consumer2);
+        \draw[tesisArrow] (broker) -- (consumer3);
     \end{tikzpicture}
 
     \caption{Broker de eventos como intermediario entre productores y consumidores.}
     \label{fig:broker_eventos}
-
 \end{figure}

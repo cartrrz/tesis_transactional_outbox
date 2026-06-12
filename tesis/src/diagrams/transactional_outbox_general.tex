@@ -1,29 +1,36 @@
 \begin{figure}[H]
     \centering
     \begin{tikzpicture}[
-        font=\small,
-        box/.style={draw, rounded corners, minimum width=3.5cm, minimum height=1cm, align=center, fill=gray!10},
-        db/.style={draw, cylinder, shape border rotate=90, aspect=0.25, minimum width=3cm, minimum height=1.2cm, align=center, fill=gray!20},
-        arrow/.style={-Latex, thick},
-        transaction/.style={draw, dashed, rounded corners, inner sep=0.3cm}
+        node distance=1.0cm and 1.2cm,
+        every node/.style={font=\small},
+        stepLabel/.style={font=\scriptsize, fill=white, inner sep=1pt, align=center}
     ]
-        \node[box] (service) at (0,3) {Microservicio};
+        \node[tesisService, minimum width=3.8cm] (service) at (0,2.9) {Microservicio};
 
-        \node[db] (business) at (-3,0.5) {Datos de\\Negocio};
-        \node[db] (outbox) at (3,0.5) {Tabla Outbox};
+        \node[
+            draw=tesisSlate!60,
+            dashed,
+            rounded corners=5pt,
+            minimum width=9.2cm,
+            minimum height=2.25cm
+        ] (tx) at (0,0.85) {};
+        \node[font=\bfseries\footnotesize, fill=white, inner sep=2pt] at (-2.85,2.05) {Transacción local};
 
-        \node[box] (publisher) at (0,-2) {Polling Publisher};
-        \node[box] (broker) at (0,-4.5) {Apache Kafka};
+        \node[tesisDatabase, minimum width=3.2cm, minimum height=1.0cm] (business) at (-2.65,0.65) {Datos de\\negocio};
+        \node[tesisDatabase, minimum width=3.2cm, minimum height=1.0cm] (outbox) at (2.65,0.65) {Tabla\\Outbox};
 
-        \draw[arrow] (service) -- node[above left]{\scriptsize 1. Guardar} (business);
-        \draw[arrow] (service) -- node[above right]{\scriptsize 2. Registrar evento} (outbox);
+        \node[tesisProcess, minimum width=4.0cm] (publisher) at (0,-1.05) {Polling Publisher};
+        \node[tesisBroker, minimum width=3.7cm] (broker) at (0,-2.45) {Apache Kafka};
 
-        \draw[arrow] (outbox) -- node[right]{\scriptsize 3. Leer pendientes} (publisher);
-        \draw[arrow] (publisher) -- node[right]{\scriptsize 4. Publicar} (broker);
+        \draw[tesisArrow] (service.south west) -- (business.north);
 
-        \node[transaction, fit=(business)(outbox), label={[font=\footnotesize]below:Misma transacción}] {};
+        \draw[tesisArrow] (service.south east) -- (outbox.north);
+
+        \draw[tesisArrow] (outbox.south) |- (publisher.east);
+
+        \draw[tesisArrow] (publisher) -- (broker);
     \end{tikzpicture}
+
     \caption{Arquitectura general del patrón Transactional Outbox.}
     \label{fig:outbox_general}
 \end{figure}
-

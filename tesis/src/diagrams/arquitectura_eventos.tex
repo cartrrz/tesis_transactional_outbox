@@ -1,60 +1,24 @@
 \begin{figure}[H]
     \centering
-
     \begin{tikzpicture}[
-        font=\small,
-        service/.style={
-            draw,
-            rounded corners,
-            minimum width=3cm,
-            minimum height=1cm,
-            align=center,
-            fill=gray!10
-        },
-        broker/.style={
-            draw,
-            rounded corners,
-            minimum width=3.6cm,
-            minimum height=1.1cm,
-            align=center,
-            fill=gray!20
-        },
-        event/.style={
-            draw,
-            rounded corners,
-            minimum width=2.6cm,
-            minimum height=0.8cm,
-            align=center,
-            fill=gray!5
-        },
-        arrow/.style={
-            -Latex,
-            thick
-        }
+        node distance=1.3cm and 1.4cm,
+        every node/.style={font=\small}
     ]
+        \node[tesisService, minimum width=3.1cm] (producer) {Servicio\\Productor};
+        \node[tesisProcess, below=of producer, minimum width=3.1cm] (event) {Evento\\\textit{OrderCreated}};
+        \node[tesisBroker, below=of event, minimum width=3.8cm] (broker) {Broker de eventos\\Kafka / RabbitMQ};
 
-        \node[service] (producer) at (0,2) {Servicio\\Productor};
+        \node[tesisService, below left=1.4cm and 2.6cm of broker] (consumer1) {Servicio\\Inventario};
+        \node[tesisService, below=1.4cm of broker] (consumer2) {Servicio\\Pagos};
+        \node[tesisService, below right=1.4cm and 2.6cm of broker] (consumer3) {Servicio\\Notificaciones};
 
-        \node[event] (event) at (0,0.6) {Evento\\OrderCreated};
-
-        \node[broker] (broker) at (0,-1) {Broker de Eventos\\Kafka / RabbitMQ};
-
-        \node[service] (consumer1) at (-4,-3) {Servicio\\Inventario};
-
-        \node[service] (consumer2) at (0,-3) {Servicio\\Pagos};
-
-        \node[service] (consumer3) at (4,-3) {Servicio\\Notificaciones};
-
-        \draw[arrow] (producer) -- (event);
-        \draw[arrow] (event) -- (broker);
-
-        \draw[arrow] (broker) -- (consumer1);
-        \draw[arrow] (broker) -- (consumer2);
-        \draw[arrow] (broker) -- (consumer3);
-
+        \draw[tesisArrow] (producer) -- node[right, font=\scriptsize] {genera} (event);
+        \draw[tesisArrow] (event) -- node[right, font=\scriptsize] {publica} (broker);
+        \draw[tesisArrow] (broker) -- (consumer1);
+        \draw[tesisArrow] (broker) -- (consumer2);
+        \draw[tesisArrow] (broker) -- (consumer3);
     \end{tikzpicture}
 
     \caption{Arquitectura orientada a eventos con productores, broker y consumidores.}
     \label{fig:arquitectura_eventos}
-
 \end{figure}

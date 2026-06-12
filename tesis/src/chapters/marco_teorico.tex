@@ -72,23 +72,19 @@ Aunque este enfoque simplifica inicialmente el desarrollo, con el crecimiento de
 \begin{table}[H]
     \centering
     \caption{Comparación entre arquitectura monolítica y microservicios.}
-    \begin{tabular}{|l|p{5cm}|p{5cm}|}
-        \hline
-        \textbf{Criterio} & \textbf{Monolito} & \textbf{Microservicios} \\
-        \hline
+    \small
+    \begin{tabularx}{\textwidth}{@{} l Y Y @{}}
+        \toprule
+        \tableHeader{Criterio} & \tableHeader{Monolito} & \tableHeader{Microservicios} \\
+        \midrule
         Despliegue & Unidad completa & Servicios independientes \\
-        \hline
         Escalabilidad & Vertical (toda la app) & Horizontal (por servicio) \\
-        \hline
         Base de datos & Compartida & Independiente por servicio \\
-        \hline
         Acoplamiento & Alto & Bajo \\
-        \hline
         Tolerancia a fallos & Baja & Alta \\
-        \hline
         Complejidad operativa & Baja & Alta \\
-        \hline
-    \end{tabular}
+        \bottomrule
+    \end{tabularx}
     \label{tab:monolito_vs_micro}
 \end{table}
 
@@ -106,7 +102,7 @@ La selección del modelo de comunicación impacta directamente en aspectos como 
 
 \subsection{Comunicación Síncrona}
 
-La comunicación síncrona se caracteriza porque un servicio realiza una solicitud a otro servicio y permanece esperando una respuesta antes de continuar con la ejecución de su proceso. Las tecnologías más utilizadas son REST (HTTP/JSON), gRPC y GraphQL~\parencite{richardson2018}.
+La comunicación síncrona se caracteriza porque un servicio realiza una solicitud a otro servicio y permanece esperando una respuesta antes de continuar con la ejecución de su proceso. Las tecnologías más utilizadas son REST sobre HTTP con JSON, gRPC y GraphQL~\parencite{richardson2018}.
 
 Este modelo resulta apropiado cuando se requiere una respuesta inmediata. Sin embargo, introduce acoplamiento temporal entre servicios y puede generar fallos en cascada cuando un servicio no se encuentra disponible.
 
@@ -127,23 +123,19 @@ La Tabla~\ref{tab:sync_vs_async} resume las principales diferencias entre comuni
 \begin{table}[H]
     \centering
     \caption{Comparación entre comunicación síncrona y asíncrona.}
-    \begin{tabular}{|l|p{5cm}|p{5cm}|}
-        \hline
-        \textbf{Criterio} & \textbf{Síncrona} & \textbf{Asíncrona} \\
-        \hline
+    \small
+    \begin{tabularx}{\textwidth}{@{} l Y Y @{}}
+        \toprule
+        \tableHeader{Criterio} & \tableHeader{Síncrona} & \tableHeader{Asíncrona} \\
+        \midrule
         Acoplamiento & Alto (temporal) & Bajo \\
-        \hline
         Respuesta & Inmediata & Diferida \\
-        \hline
         Tolerancia a fallos & Baja & Alta \\
-        \hline
         Escalabilidad & Limitada & Alta \\
-        \hline
         Complejidad & Baja & Media-Alta \\
-        \hline
         Ejemplo & REST, gRPC & Kafka, RabbitMQ \\
-        \hline
-    \end{tabular}
+        \bottomrule
+    \end{tabularx}
     \label{tab:sync_vs_async}
 \end{table}
 
@@ -188,25 +180,20 @@ Kafka organiza la información en estructuras denominadas \textit{topics}, dentr
 \begin{table}[H]
     \centering
     \caption{Conceptos fundamentales de Apache Kafka.}
-    \begin{tabular}{|l|p{8cm}|}
-        \hline
-        \textbf{Concepto} & \textbf{Descripción} \\
-        \hline
+    \small
+    \begin{tabularx}{0.92\textwidth}{@{} l Y @{}}
+        \toprule
+        \tableHeader{Concepto} & \tableHeader{Descripción} \\
+        \midrule
         Topic & Canal lógico donde se publican los eventos. \\
-        \hline
         Partition & División de un topic para permitir paralelismo. \\
-        \hline
         Producer & Componente que publica eventos en un topic. \\
-        \hline
         Consumer & Componente que lee eventos de un topic. \\
-        \hline
         Consumer Group & Conjunto de consumidores que procesan particiones de forma coordinada. \\
-        \hline
         Offset & Posición del último mensaje leído por un consumidor. \\
-        \hline
         Broker & Nodo del clúster de Kafka que almacena y sirve datos. \\
-        \hline
-    \end{tabular}
+        \bottomrule
+    \end{tabularx}
     \label{tab:kafka_concepts}
 \end{table}
 
@@ -328,29 +315,22 @@ La implementación del patrón requiere una tabla especializada para almacenar l
 \begin{table}[H]
     \centering
     \caption{Estructura típica de una tabla Outbox.}
-    \begin{tabular}{|l|l|p{6cm}|}
-        \hline
-        \textbf{Campo} & \textbf{Tipo} & \textbf{Descripción} \\
-        \hline
+    \small
+    \begin{tabularx}{\textwidth}{@{} l l Y @{}}
+        \toprule
+        \tableHeader{Campo} & \tableHeader{Tipo} & \tableHeader{Descripción} \\
+        \midrule
         id & UUID & Identificador único del evento. \\
-        \hline
         aggregate\_type & VARCHAR & Tipo de entidad que generó el evento. \\
-        \hline
         aggregate\_id & UUID & Identificador de la entidad asociada. \\
-        \hline
         event\_type & VARCHAR & Tipo de evento generado. \\
-        \hline
         payload & JSONB & Información completa del evento serializada. \\
-        \hline
         status & VARCHAR & Estado del evento (PENDING, SENT, FAILED). \\
-        \hline
         retry\_count & INTEGER & Número de reintentos realizados. \\
-        \hline
         created\_at & TIMESTAMP & Fecha y hora de creación. \\
-        \hline
         processed\_at & TIMESTAMP & Fecha y hora de publicación exitosa. \\
-        \hline
-    \end{tabular}
+        \bottomrule
+    \end{tabularx}
     \label{tab:outbox}
 \end{table}
 
@@ -400,17 +380,16 @@ Los sistemas de mensajería trabajan bajo diferentes modelos de entrega, cada un
 \begin{table}[H]
     \centering
     \caption{Modelos de entrega de mensajes en sistemas distribuidos.}
-    \begin{tabular}{|l|p{4.5cm}|p{4.5cm}|}
-        \hline
-        \textbf{Modelo} & \textbf{Garantía} & \textbf{Riesgo} \\
-        \hline
+    \small
+    \begin{tabularx}{\textwidth}{@{} l Y Y @{}}
+        \toprule
+        \tableHeader{Modelo} & \tableHeader{Garantía} & \tableHeader{Riesgo} \\
+        \midrule
         At-most-once & El mensaje se entrega como máximo una vez. & Pérdida de mensajes. \\
-        \hline
         At-least-once & El mensaje se entrega al menos una vez. & Mensajes duplicados. \\
-        \hline
         Exactly-once & El mensaje se procesa exactamente una vez. & Complejidad extrema de implementación. \\
-        \hline
-    \end{tabular}
+        \bottomrule
+    \end{tabularx}
     \label{tab:delivery_models}
 \end{table}
 
@@ -527,25 +506,19 @@ La Tabla~\ref{tab:tecnologias} resume las tecnologías utilizadas en la implemen
 \begin{table}[H]
     \centering
     \caption{Tecnologías utilizadas en la implementación de la librería.}
-    \begin{tabular}{|l|l|p{6cm}|}
-        \hline
-        \textbf{Tecnología} & \textbf{Versión} & \textbf{Propósito} \\
-        \hline
+    \small
+    \begin{tabularx}{\textwidth}{@{} l l Y @{}}
+        \toprule
+        \tableHeader{Tecnología} & \tableHeader{Versión} & \tableHeader{Propósito} \\
+        \midrule
         Java & 17+ & Lenguaje de implementación. \\
-        \hline
         Spring Boot & 3.x & Framework de desarrollo. \\
-        \hline
         PostgreSQL & 15+ & Base de datos relacional (tabla Outbox). \\
-        \hline
         Apache Kafka & 3.x & Broker de eventos. \\
-        \hline
         Docker & -- & Contenedorización de servicios. \\
-        \hline
         Testcontainers & 1.x & Pruebas de integración con contenedores. \\
-        \hline
         Gradle & -- & Gestión de dependencias y construcción. \\
-        \hline
-    \end{tabular}
+        \bottomrule
+    \end{tabularx}
     \label{tab:tecnologias}
 \end{table}
-
