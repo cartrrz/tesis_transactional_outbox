@@ -511,7 +511,7 @@ Sin la librería, los eventos generados durante la caída del broker se pierden 
 
 \section{RESUMEN DE RESULTADOS}
 
-La Tabla~\ref{tab:resumen_resultados} consolida los resultados obtenidos en todos los escenarios de prueba.
+La Tabla~\ref{tab:resumen_resultados} consolida los resultados obtenidos en los escenarios de entrega de eventos y resume, de forma complementaria, la validación de idempotencia.
 
 \begin{table}[H]
     \centering
@@ -521,10 +521,13 @@ La Tabla~\ref{tab:resumen_resultados} consolida los resultados obtenidos en todo
         \toprule
         \tableHeader{Indicador} & \tableHeader{Resultado} \\
         \midrule
-        Total de eventos generados (todos los escenarios) & 43,100 \\
-        Total de eventos entregados exitosamente & 43,100 \\
+        Total de eventos generados para medición de entrega & 61.100 \\
+        Total de eventos entregados exitosamente & 61.100 \\
         Tasa de entrega global & 100\% \\
         Eventos perdidos & 0 \\
+        Eventos únicos evaluados en idempotencia & 800 \\
+        Entregas duplicadas simuladas & 1.750 \\
+        Duplicados descartados por idempotencia & 950 \\
         Eventos duplicados procesados (con idempotencia) & 0 \\
         Latencia promedio (operación normal) & 550 ms \\
         Tasa de recuperación ante fallas del broker & 100\% \\
@@ -544,27 +547,29 @@ La Tabla~\ref{tab:resumen_resultados} consolida los resultados obtenidos en todo
             bar width=18pt,
             xlabel={Escenario de prueba},
             ylabel={Eventos},
-            symbolic x coords={Normal, Falla 30s, Falla 60s, Falla 120s, Falla 180s, Estrés 10h, Estrés 50h, Estrés 200h},
+            symbolic x coords={Normal, Falla 30s, Falla 60s, Falla 120s, Falla 180s, Estrés 10h, Estrés 20h, Estrés 50h, Estrés 100h, Estrés 200h},
             xtick=data,
-            x tick label style={rotate=35, anchor=east, font=\small},
+            x tick label style={rotate=35, anchor=east, font=\scriptsize},
             ymin=0, ymax=22000,
-            legend style={at={(0.5,-0.35)}, anchor=north, legend columns=2},
+            ytick={0,5000,10000,15000,20000},
+            scaled y ticks=false,
+            legend style={at={(0.5,-0.38)}, anchor=north, legend columns=2},
             grid=major,
             grid style={tesisSlate!15},
-            enlarge x limits=0.08,
+            enlarge x limits=0.05,
         ]
         \addplot[fill=tesisBlue!45] coordinates {
-            (Normal, 16600) (Falla 30s, 500) (Falla 60s, 1000) (Falla 120s, 2000) (Falla 180s, 3000) (Estrés 10h, 1000) (Estrés 50h, 5000) (Estrés 200h, 20000)
+            (Normal, 16600) (Falla 30s, 500) (Falla 60s, 1000) (Falla 120s, 2000) (Falla 180s, 3000) (Estrés 10h, 1000) (Estrés 20h, 2000) (Estrés 50h, 5000) (Estrés 100h, 10000) (Estrés 200h, 20000)
         };
         \addlegendentry{Eventos generados}
 
         \addplot[fill=tesisGreen!65] coordinates {
-            (Normal, 16600) (Falla 30s, 500) (Falla 60s, 1000) (Falla 120s, 2000) (Falla 180s, 3000) (Estrés 10h, 1000) (Estrés 50h, 5000) (Estrés 200h, 20000)
+            (Normal, 16600) (Falla 30s, 500) (Falla 60s, 1000) (Falla 120s, 2000) (Falla 180s, 3000) (Estrés 10h, 1000) (Estrés 20h, 2000) (Estrés 50h, 5000) (Estrés 100h, 10000) (Estrés 200h, 20000)
         };
         \addlegendentry{Eventos entregados}
         \end{axis}
     \end{tikzpicture}
-    \caption{Resumen visual: eventos generados vs. entregados en todos los escenarios (100\% de entrega en cada caso).}
+    \caption{Resumen visual: eventos generados vs. entregados en los escenarios de entrega evaluados (100\% de entrega en cada caso).}
     \label{fig:resumen_global}
 \end{figure}
 
@@ -605,10 +610,10 @@ Para complementar la verificación descriptiva de los indicadores, se aplicó un
     X \sim \operatorname{Binomial}(n, p)
 \]
 
-Donde $n$ es el total de eventos evaluados y $p$ es la probabilidad real de entrega exitosa. Con base en el resumen consolidado de resultados, se tiene $n = 43{,}100$ eventos y $x = 43{,}100$ entregas exitosas, por lo que la proporción muestral observada es:
+Donde $n$ es el total de eventos evaluados y $p$ es la probabilidad real de entrega exitosa. Con base en los escenarios de entrega evaluados (operación normal, falla temporal del broker y carga concurrente), se tiene $n = 61\,100$ eventos y $x = 61\,100$ entregas exitosas. El escenario de idempotencia se analiza de forma complementaria porque mide descarte de duplicados en el consumidor, no generación de eventos desde la tabla Outbox. La proporción muestral observada es:
 
 \[
-    \hat{p} = \frac{x}{n} = \frac{43{,}100}{43{,}100} = 1.0000
+    \hat{p} = \frac{x}{n} = \frac{61\,100}{61\,100} = 1.0000
 \]
 
 El contraste estadístico se planteó contra el umbral definido en la hipótesis:
@@ -624,7 +629,7 @@ El contraste estadístico se planteó contra el umbral definido en la hipótesis
 Para una significancia de $\alpha = 0.05$, se aplicó una prueba binomial exacta unilateral. Dado que todos los eventos fueron entregados, el valor-p bajo el caso límite $p_0 = 0.99$ es:
 
 \[
-    P(X \geq 43{,}100 \mid n = 43{,}100, p_0 = 0.99) = 0.99^{43{,}100} = 7.53 \times 10^{-189}
+    P(X \geq 61\,100 \mid n = 61\,100, p_0 = 0.99) = 0.99^{61\,100} = 2.04 \times 10^{-267}
 \]
 
 La Tabla~\ref{tab:modelo_estadistico_hipotesis} resume los resultados del modelo estadístico.
@@ -637,27 +642,27 @@ La Tabla~\ref{tab:modelo_estadistico_hipotesis} resume los resultados del modelo
         \toprule
         \tableHeader{Elemento} & \tableHeader{Valor} & \tableHeader{Interpretación} \\
         \midrule
-        Eventos evaluados ($n$) & 43,100 & Tamaño de muestra consolidado \\
-        Eventos entregados ($x$) & 43,100 & Todos los eventos fueron entregados \\
+        Eventos evaluados ($n$) & 61.100 & Tamaño de muestra consolidado para entrega \\
+        Eventos entregados ($x$) & 61.100 & Todos los eventos fueron entregados \\
         Proporción observada ($\hat{p}$) & 1.0000 & Tasa de entrega observada del 100\% \\
         Umbral de la hipótesis ($p_0$) & 0.9900 & Criterio mínimo exigido: 99\% \\
-        Valor-p exacto & $7.53 \times 10^{-189}$ & Menor que $\alpha = 0.05$ \\
-        Intervalo de confianza unilateral 95\% & $[99.993\%, 100\%]$ & El límite inferior supera el 99\% \\
-        Límite superior de falla 95\% & $0.00695\%$ & Probabilidad máxima estimada de pérdida o falla de entrega \\
+        Valor-p exacto & $2.04 \times 10^{-267}$ & Menor que $\alpha = 0.05$ \\
+        Intervalo de confianza unilateral 95\% & $[99.995\%, 100\%]$ & El límite inferior supera el 99\% \\
+        Límite superior de falla 95\% & $0.00490\%$ & Probabilidad máxima estimada de pérdida o falla de entrega \\
         \bottomrule
     \end{tabularx}
     \label{tab:modelo_estadistico_hipotesis}
 \end{table}
 
-Como el valor-p obtenido es mucho menor que el nivel de significancia $\alpha = 0.05$, se rechaza la hipótesis nula $H_0$ y se acepta la hipótesis alternativa $H_1$. Además, el límite inferior del intervalo de confianza unilateral al 95\% es 99.993\%, valor superior al umbral de 99\% establecido en la hipótesis. Por tanto, los datos experimentales proporcionan evidencia estadística suficiente para afirmar que la librería supera el nivel mínimo de entrega definido.
+Como el valor-p obtenido es mucho menor que el nivel de significancia $\alpha = 0.05$, se rechaza la hipótesis nula $H_0$ y se acepta la hipótesis alternativa $H_1$. Además, el límite inferior del intervalo de confianza unilateral al 95\% es 99.995\%, valor superior al umbral de 99\% establecido en la hipótesis. Por tanto, los datos experimentales proporcionan evidencia estadística suficiente para afirmar que la librería supera el nivel mínimo de entrega definido.
 
-El mismo razonamiento se aplica a los eventos perdidos y a los duplicados procesados: al observarse cero casos en las pruebas, el límite superior estimado para una falla de entrega se mantiene por debajo de 0.00695\% con 95\% de confianza. Esto respalda estadísticamente que la pérdida y el procesamiento duplicado fueron reducidos de forma significativa dentro del entorno experimental evaluado.
+El mismo razonamiento se aplica a los eventos perdidos: al observarse cero casos en las pruebas de entrega, el límite superior estimado para una falla de entrega se mantiene por debajo de 0.00490\% con 95\% de confianza. La validación de idempotencia complementa este resultado: se simularon 1.750 entregas sobre 800 eventos únicos, se descartaron 950 duplicados y no se registró ningún evento duplicado procesado.
 
 \subsection{Conclusión de la Hipótesis}
 
-Los resultados experimentales demuestran que la librería basada en el patrón \textit{Transactional Outbox} alcanza una tasa de entrega del \textbf{100\%} en todos los escenarios evaluados, incluyendo operación normal, fallas temporales del broker, carga concurrente elevada y entrega duplicada de eventos.
+Los resultados experimentales demuestran que la librería basada en el patrón \textit{Transactional Outbox} alcanza una tasa de entrega del \textbf{100\%} en los escenarios de operación normal, fallas temporales del broker y carga concurrente elevada. De forma complementaria, el escenario de entrega duplicada confirma que el módulo de idempotencia evita el procesamiento repetido de eventos.
 
-La tasa de entrega obtenida (100\%) supera ampliamente el umbral definido en la hipótesis (99\%) y el modelo estadístico binomial confirma que esta diferencia es significativa (valor-p $= 7.53 \times 10^{-189}$). Por lo tanto, se \textbf{acepta la hipótesis de investigación}. La librería garantiza la entrega confiable de eventos eliminando completamente la pérdida de mensajes y, mediante el módulo de idempotencia, previene el procesamiento duplicado en los servicios consumidores.
+La tasa de entrega obtenida (100\%) supera ampliamente el umbral definido en la hipótesis (99\%) y el modelo estadístico binomial confirma que esta diferencia es significativa (valor-p $= 2.04 \times 10^{-267}$). Por lo tanto, se \textbf{acepta la hipótesis de investigación}. La librería garantiza la entrega confiable de eventos eliminando completamente la pérdida de mensajes y, mediante el módulo de idempotencia, previene el procesamiento duplicado en los servicios consumidores.
 
 Los factores que contribuyen a este resultado son:
 

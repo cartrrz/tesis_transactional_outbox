@@ -9,7 +9,7 @@ La librería implementada en Java y Spring Boot, basada en el patrón \textit{Tr
 
 Los mecanismos de reintento con \textit{backoff} exponencial, limpieza automática e idempotencia en consumidores complementaron la solución, permitiendo recuperar eventos ante fallas temporales del broker y evitar el procesamiento duplicado de mensajes.
 
-En la evaluación experimental se procesaron 43.100 eventos con una tasa de entrega del 100\%, sin pérdida de eventos y con descarte correcto de duplicados. Estos resultados superan el umbral del 99\% establecido en la hipótesis, por lo que se acepta la hipótesis de investigación dentro del entorno de pruebas definido.
+En la evaluación experimental se procesaron 61.100 eventos de entrega con una tasa de entrega del 100\%, sin pérdida de eventos y con descarte correcto de duplicados en las pruebas de idempotencia. Estos resultados superan el umbral del 99\% establecido en la hipótesis, por lo que se acepta la hipótesis de investigación dentro del entorno de pruebas definido.
 
 La solución propuesta es adecuada para sistemas que aceptan consistencia eventual y comunicación asíncrona. Sin embargo, los resultados obtenidos corresponden a un entorno controlado con PostgreSQL, Apache Kafka y Spring Boot, por lo que su adopción en producción requiere validaciones adicionales.
 

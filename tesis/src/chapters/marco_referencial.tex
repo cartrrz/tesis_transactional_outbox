@@ -64,7 +64,7 @@ En este contexto, no se dispone de una librería ligera, reutilizable y de fáci
 
 \subsection{FORMULACIÓN DEL PROBLEMA}
 
-?`De qué manera la implementación de una librería basada en el patrón \textit{Transactional Outbox} en Java permite garantizar la entrega confiable de eventos en sistemas de microservicios, reduciendo la pérdida y duplicación de mensajes?
+¿De qué manera la implementación de una librería basada en el patrón \textit{Transactional Outbox} en Java permite garantizar la entrega confiable de eventos en sistemas de microservicios, reduciendo la pérdida y duplicación de mensajes?
 
 \section{OBJETIVOS}
 
@@ -191,7 +191,7 @@ Se empleará el método \textbf{hipotético-deductivo}, partiendo de la hipótes
     \item \textbf{Desarrollo de software}: implementación de la librería siguiendo principios de diseño SOLID y patrones de arquitectura limpia.
     \item \textbf{Pruebas de integración}: validación del comportamiento correcto de la librería con bases de datos y brokers reales mediante contenedores Docker (Testcontainers).
     \item \textbf{Pruebas de estrés}: medición del rendimiento bajo carga concurrente elevada.
-    \item \textbf{Pruebas de resiliencia}: simulación de fallas (caída del broker, latencia de red, reinicio de servicios) para evaluar la capacidad de recuperación.
+    \item \textbf{Pruebas de resiliencia}: simulación de fallas controladas, principalmente caída temporal del broker, para evaluar la capacidad de recuperación.
 \end{itemize}
 
 \subsection{PROCEDIMIENTO}
@@ -206,4 +206,3 @@ El desarrollo del trabajo seguirá las siguientes fases:
     \item \textbf{Fase de validación}: ejecución de pruebas de integración, estrés y resiliencia; recolección de métricas.
     \item \textbf{Fase de evaluación}: análisis de resultados, comparación con la hipótesis planteada y elaboración de conclusiones.
 \end{enumerate}
-

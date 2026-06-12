@@ -7,7 +7,7 @@ La presente tesis desarrolla una librería en Java basada en el patrón \textit{
 
 La librería incorpora mecanismos de reintento con \textit{backoff} exponencial, limpieza automática de eventos procesados e idempotencia en consumidores para evitar el procesamiento duplicado. La validación se realizó mediante pruebas de integración, pruebas de estrés y escenarios de fallas controladas usando Docker y Testcontainers.
 
-Los resultados obtenidos demostraron una tasa de entrega del 100\% sobre 43.100 eventos procesados, sin pérdida de eventos y con descarte correcto de duplicados. Estos resultados superan el umbral del 99\% planteado en la hipótesis, confirmando que el patrón \textit{Transactional Outbox} constituye una alternativa efectiva para mejorar la confiabilidad en la comunicación asíncrona entre microservicios.
+Los resultados obtenidos demostraron una tasa de entrega del 100\% sobre 61.100 eventos de entrega evaluados, sin pérdida de eventos y con descarte correcto de duplicados en las pruebas de idempotencia. Estos resultados superan el umbral del 99\% planteado en la hipótesis, confirmando que el patrón \textit{Transactional Outbox} constituye una alternativa efectiva para mejorar la confiabilidad en la comunicación asíncrona entre microservicios.
 
 \textbf{Palabras clave:} Microservicios, Transactional Outbox, entrega confiable de eventos, idempotencia, Apache Kafka.\\
 \textbf{Metodología:} Investigación aplicada, cuantitativa, descriptiva y experimental.
@@ -21,7 +21,7 @@ This thesis develops a Java library based on the \textit{Transactional Outbox} p
 
 The library includes exponential backoff retries, automatic cleanup of processed events, and idempotency mechanisms for consumers to avoid duplicate processing. The validation was carried out through integration tests, stress tests, and controlled failure scenarios using Docker and Testcontainers.
 
-The obtained results showed a 100\% delivery rate over 43,100 processed events, with no event loss and correct duplicate discarding. These results exceed the 99\% threshold defined in the hypothesis, confirming that the \textit{Transactional Outbox} pattern is an effective alternative to improve reliability in asynchronous communication between microservices.
+The results showed a 100\% delivery rate over 61,100 evaluated delivery events, with no event loss. The idempotency tests correctly discarded duplicates. These results exceed the 99\% threshold defined in the hypothesis, confirming that the \textit{Transactional Outbox} pattern is an effective alternative to improve reliability in asynchronous communication between microservices.
 
 \textbf{Keywords:} Microservices, Transactional Outbox, reliable event delivery, idempotency, Apache Kafka.\\
 \textbf{Methodology:} Applied, quantitative, descriptive, and experimental research.
